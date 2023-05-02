@@ -7,6 +7,7 @@
 #### Hur ska ni arbeta?
 - Vi använder Trello för att lägga upp planering och tasks.
 - Vite, Typescript, MongoDB, SPA, Express, SASS.
+- Vi skapar issues/tasks och branches utifrån dom. 
 
 #### Hur hanterar ni pull requests och merges?
 - Vi gå igenom det tillsammans vid våra dagliga möten. 
@@ -19,7 +20,7 @@
 
 #### Underskrifter: 
 - Anton Janzon
-- 
+- Sandra Stridsman
 -
 - 
 
