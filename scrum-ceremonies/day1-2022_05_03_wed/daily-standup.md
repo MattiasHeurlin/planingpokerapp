@@ -1,19 +1,14 @@
 # Daily Standup Report
 
 ## Wazzup?
+
 > Yesterday I…, today I will…, I need help with…, I'm stuck with…, TIL…
 
-### Name 1
-Lorem ipsum dolor sit amet
+### Sandra, Sofia, Anton, Mattias
 
-### Name 2
-Lorem ipsum dolor sit amet
+Igår satte vi upp databas och miljöerna för både front- och backend tillsammans.
+Idag har vi planerat, gjort wireframe, socket-schema, och skapat några sockets i backend.
 
-### Name 3
-Lorem ipsum dolor sit amet
-
-### Name 4
-Lorem ipsum dolor sit amet
-
+TIL: Socket repetition & Github projects.
 
 > ⚠️⚠️⚠️ Remember to add a screenshot of today's scrum board to this folder!
