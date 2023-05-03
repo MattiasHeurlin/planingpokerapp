@@ -39,38 +39,79 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-const rooms = [
-  {
-    admin: 'Joe',
-    users: [
-      'Doe',
-      'Due'
-    ],
-    usersWhoLeft: ['Donny'],
-    topics: [
-      {
-        title: 'Skapa frontend',
-        score: 5
-      },
-      {
-        title: 'Skapa backend',
-        score: 5
-      },
-    ]
-  }
-]
+// const rooms = [
+//   {
+//     admin: 'Joe',
+//     users: [{
+//       name: 'Doe',
+//       id:
+//     }, {
+//       name: 'Doe',
+//       id:
+//     }],
+//     usersWhoLeft: ['Donny'],
+//     topics: [
+//       {
+//         title: 'Skapa frontend',
+//         score: 5,
+//       },
+//       {
+//         title: 'Skapa backend',
+//         score: 5,
+//       },
+//     ],
+//   },
+// ];
 
+const ROOMS = [];
 
 io.on('connection', (socket) => {
+  socket.on('disconnect', () => {
+    const roomWithUser = ROOMS.find((room) =>
+      room.users.find((user) => user.id === socket.id)
+    );
 
-  socket.on("disconnect", () => {
-    console.log(socket.id + " has disconnected from the server.")
-  })
+    if (!roomWithUser) {
+      console.log('User without room left');
+      return;
+    }
 
-  socket.on("test", () => {
-    console.log("funkar jag?")
-    io.emit("test", "hej");
-  })
-})
+    const user = roomWithUser.find((user) => user.id == socket.id);
+    const indexOfUser = roomWithUser.users.indexOf(user);
+
+    roomWithUser.splice(indexOfUser, 1);
+
+    roomWithUser.usersWhoLeft.push(user.userName);
+
+    roomWithUser.users.forEach((user) =>
+      io.to(user.id).emit('userDisconnect', roomWithUser)
+    );
+  });
+
+  socket.on('monitorRooms', () => {
+    io.emit('monitorRooms', ROOMS);
+  });
+
+  socket.on('joinRoom', (userAndRoomIndex) => {
+    ROOMS.forEach((room) => {
+      room.users.forEach((user) => {
+        if (user.userName === userAndRoomIndex.userName) {
+          console.log('User that name is already in the room.');
+          return;
+        }
+      });
+    });
+    const roomIndex = userAndRoomIndex.roomIndex;
+    const newUser = {
+      name: userAndRoomIndex.userName,
+      id: socket.id,
+    };
+    const room = ROOMS[roomIndex];
+
+    room.users.push(newUser);
+
+    room.users.forEach((user) => io.to(user.id).emit('joinRoom', room));
+  });
+});
 
 module.exports = { app: app, server: server };
