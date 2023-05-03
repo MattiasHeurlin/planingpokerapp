@@ -21,6 +21,6 @@
 #### Underskrifter: 
 - Anton Janzon
 - Sandra Stridsman
--
+- Sofia Olsson
 - 
 
