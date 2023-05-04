@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// const rooms = [
+// const ROOMS = [
 //   {
 //     admin: 'Joe',
 //     users: [{
@@ -61,9 +61,19 @@ app.use('/users', usersRouter);
 //         score: 5,
 //       },
 //     ],
+//     currentTopic: {
+//         title: topics[currentIndex].title,
+//         votes: [
+//           {user: user, score: score},
+//           {user: user, score: score},
+//           {user: user, score: score},
+//           {user: user, score: score}
+//         ]
+//     }
 //   },
 // ];
 
+const FIBONACCI = [0, 1, 3, 5, 8];
 const ROOMS = [];
 
 io.on('connection', (socket) => {
@@ -143,6 +153,53 @@ io.on('connection', (socket) => {
 
     usersInRoom.forEach((user) => io.to(user.socketId).emit('roomDeleted'));
   });
+
+  socket.on('vote', (roomIndexAndUserWhoVotedAndScore) => {
+    const room = ROOMS[roomIndex];
+    const usersInRoom = room.users.map((user) => user);
+
+    const userAndScore = {
+      user: roomIndexAndUserWhoVotedAndScore.user,
+      score: roomIndexAndUserWhoVotedAndScore.score,
+    };
+
+    room.currentTopic.votes.push(userAndScore);
+
+    if (room.users.length === room.currentTopic.votes.length) {
+      const scoresAdded = room.currentTopic.votes.reduce(
+        (sum, vote) => sum + vote.score,
+        0
+      );
+      const averageValue = scoresAdded / room.currentTopic.votes.length;
+      const fibonacciValue = roundToNearestFibonacci(averageValue);
+
+      const lastUserScoreAndFibonacci = {
+        userScore: userAndScore,
+        averageValue: fibonacciValue,
+      };
+
+      return usersInRoom.forEach((user) =>
+        io.to(user.socketId).emit('allVoted', lastUserScoreAndFibonacci)
+      );
+    }
+
+    usersInRoom.forEach((user) => io.to(user.socketId).emit('vote', user));
+  });
 });
+
+function roundToNearestFibonacci(number) {
+  let nearestFib = FIBONACCI[0];
+  let minDifference = Math.abs(number - nearestFib);
+
+  for (let i = 1; i < FIBONACCI.length; i++) {
+    const difference = Math.abs(number - FIBONACCI[i]);
+    if (difference < minDifference) {
+      minDifference = difference;
+      nearestFib = FIBONACCI[i];
+    }
+  }
+
+  return nearestFib;
+}
 
 module.exports = { app: app, server: server };
