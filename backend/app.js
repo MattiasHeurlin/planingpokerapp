@@ -126,13 +126,22 @@ io.on('connection', (socket) => {
     const user = room.users.find(
       (user) => user.socketId == userAndRoomIndex.user.socketId
     );
-    const indexOfUser = roomWithUser.users.indexOf(user);
+    const indexOfUser = room.users.indexOf(user);
 
-    roomWithUser.splice(indexOfUser, 1);
+    room.splice(indexOfUser, 1);
 
-    roomWithUser.usersWhoLeft.push(user);
+    room.usersWhoLeft.push(user);
 
-    roomWithUser.users.forEach((user) => io.to(user.id).emit('userLeft', room));
+    room.users.forEach((user) => io.to(user.id).emit('userLeft', room));
+  });
+
+  socket.on('deleteRoom', (roomIndex) => {
+    const room = ROOMS[roomIndex];
+    const usersInRoom = room.users.map((user) => user);
+
+    ROOMS.splice(roomIndex, 1);
+
+    usersInRoom.forEach((user) => io.to(user.socketId).emit('roomDeleted'));
   });
 });
 
