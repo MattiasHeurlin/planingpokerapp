@@ -183,7 +183,7 @@ io.on('connection', (socket) => {
         averageValue: fibonacciValue,
       };
 
-      room.currentTopic.finalScore = fibonacciValue;
+      room.currentTopic.score = fibonacciValue;
 
       return usersInRoom.forEach((user) =>
         io.to(user.socketId).emit('allVoted', lastUserScoreAndFibonacci)
@@ -230,6 +230,18 @@ io.on('connection', (socket) => {
     room.upcomingTopics.splice(0, 1);
 
     room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
+  });
+
+  socket.on('endGame', (roomIndex) => {
+    const room = ROOMS[roomIndex];
+    const finishedTopics = room.finishedTopics;
+    const users = room.users;
+
+    ROOMS.splice(roomIndex, 1);
+
+    users.forEach((user) =>
+      io.to(user.socketId).emit('endGame', finishedTopics)
+    );
   });
 });
 
