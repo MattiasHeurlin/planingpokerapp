@@ -185,6 +185,23 @@ io.on('connection', (socket) => {
 
     usersInRoom.forEach((user) => io.to(user.socketId).emit('vote', user));
   });
+
+  socket.on('changeTopicOrder', (roomAndTopicAndDirection) => {
+    const room = ROOMS[roomAndTopicAndDirection.roomIndex];
+    const direction = roomAndTopicAndDirection.direction;
+
+    const indexOfTopic = room.topics.indexOf(roomAndTopicAndDirection.topic);
+
+    if (direction == 'down') {
+      // handle swap down
+      room.topics[indexOfTopic] = room.topics[indexOfTopic + 1];
+      room.topics[indexOfTopic + 1] = roomAndTopicAndDirection.topic;
+    } else {
+      // handle swap up
+      room.topics[indexOfTopic] = room.topics[indexOfTopic - 1];
+      room.topics[indexOfTopic - 1] = roomAndTopicAndDirection.topic;
+    }
+  });
 });
 
 function roundToNearestFibonacci(number) {
