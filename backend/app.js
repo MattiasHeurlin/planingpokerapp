@@ -43,13 +43,16 @@ app.use('/users', usersRouter);
 const ROOMS = [
   {
     admin: 'Joe',
-    users: [{
-      name: 'Doe',
-      id: 1
-    }, {
-      name: 'Doe',
-      id: 2
-    }],
+    users: [
+      {
+        name: 'Doe',
+        id: 1,
+      },
+      {
+        name: 'Doe',
+        id: 2,
+      },
+    ],
     usersWhoLeft: ['Donny'],
     upcomingTopics: [
       {
@@ -60,18 +63,18 @@ const ROOMS = [
       },
     ],
     currentTopic: {
-        title: topics[currentIndex].title,
-        votes: [
-          {user: user, score: score},
-          {user: user, score: score},
-          {user: user, score: score},
-          {user: user, score: score}
-        ]
+      title: topics[currentIndex].title,
+      votes: [
+        { user: user, score: score },
+        { user: user, score: score },
+        { user: user, score: score },
+        { user: user, score: score },
+      ],
     },
     finishedTopics: [
-      {title: "skapa admin-vy", score: 5},
-      {title: "random topic", score: 3}
-    ]
+      { title: 'skapa admin-vy', score: 5 },
+      { title: 'random topic', score: 3 },
+    ],
   },
 ];
 
@@ -180,6 +183,8 @@ io.on('connection', (socket) => {
         averageValue: fibonacciValue,
       };
 
+      room.currentTopic.finalScore = fibonacciValue;
+
       return usersInRoom.forEach((user) =>
         io.to(user.socketId).emit('allVoted', lastUserScoreAndFibonacci)
       );
@@ -205,22 +210,27 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on("startGame", (roomIndex) => {
+  socket.on('startGame', (roomIndex) => {
     const room = ROOMS[roomIndex];
 
-    room.currentTopic = {title: room.topics[0], votes: []}
+    room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
 
-    room.topics.splice(0, 1);
+    room.upcomingTopics.splice(0, 1);
 
-    room.users.forEach((user) => io.to(user.socketId).emit("startGame", room));
-  })
+    room.users.forEach((user) => io.to(user.socketId).emit('startGame', room));
+  });
 
-  // socket.on("nextTopic", (roomIndex) => {
-  //   const room = ROOMS[roomIndex];
+  socket.on('nextTopic', (roomIndex) => {
+    const room = ROOMS[roomIndex];
 
+    room.finishedTopics.push(room.currentTopic);
 
+    room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
 
-  // })
+    room.upcomingTopics.splice(0, 1);
+
+    room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
+  });
 });
 
 function roundToNearestFibonacci(number) {
