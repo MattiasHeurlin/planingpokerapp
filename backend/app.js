@@ -61,6 +61,15 @@ const rooms = [
 ]
 
 
+app.get('/rooms', (req, res) => {
+
+  res.json(rooms)
+
+})
+
+
+
+
 io.on('connection', (socket) => {
 
   socket.on("disconnect", () => {
