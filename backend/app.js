@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const { stringify } = require('querystring');
 
 const app = express();
 const server = require('http').Server(app);
@@ -68,7 +69,7 @@ const ROOMS = [];
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     const roomWithUser = ROOMS.find((room) =>
-      room.users.find((user) => user.id === socket.id)
+      room.users.find((user) => user.socketId === socket.id)
     );
 
     if (!roomWithUser) {
@@ -76,12 +77,12 @@ io.on('connection', (socket) => {
       return;
     }
 
-    const user = roomWithUser.find((user) => user.id == socket.id);
+    const user = roomWithUser.find((user) => user.socketId == socket.id);
     const indexOfUser = roomWithUser.users.indexOf(user);
 
     roomWithUser.splice(indexOfUser, 1);
 
-    roomWithUser.usersWhoLeft.push(user.userName);
+    roomWithUser.usersWhoLeft.push(user);
 
     roomWithUser.users.forEach((user) =>
       io.to(user.id).emit('userDisconnect', roomWithUser)
@@ -93,6 +94,11 @@ io.on('connection', (socket) => {
   });
 
   socket.on('joinRoom', (userAndRoomIndex) => {
+    // userAndRoomIndex = {
+    //   user: {id: uuidId, name: "Random", socketId: socketId},
+    //   roomIndex: number
+    // }
+
     ROOMS.forEach((room) => {
       room.users.forEach((user) => {
         if (user.userName === userAndRoomIndex.userName) {
@@ -102,15 +108,31 @@ io.on('connection', (socket) => {
       });
     });
     const roomIndex = userAndRoomIndex.roomIndex;
-    const newUser = {
-      name: userAndRoomIndex.userName,
-      id: socket.id,
-    };
+
     const room = ROOMS[roomIndex];
 
-    room.users.push(newUser);
+    room.users.push(userAndRoomIndex.user);
 
     room.users.forEach((user) => io.to(user.id).emit('joinRoom', room));
+  });
+
+  socket.on('leaveRoom', (userAndRoomIndex) => {
+    // userAndRoomIndex = {
+    //   user: {id: uuidId, name: "Random", socketId: socketId},
+    //   roomIndex: number
+    // }
+
+    const room = ROOMS[roomIndex];
+    const user = room.users.find(
+      (user) => user.socketId == userAndRoomIndex.user.socketId
+    );
+    const indexOfUser = roomWithUser.users.indexOf(user);
+
+    roomWithUser.splice(indexOfUser, 1);
+
+    roomWithUser.usersWhoLeft.push(user);
+
+    roomWithUser.users.forEach((user) => io.to(user.id).emit('userLeft', room));
   });
 });
 
