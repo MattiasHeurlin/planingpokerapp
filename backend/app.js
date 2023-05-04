@@ -76,6 +76,15 @@ app.use('/users', usersRouter);
 const FIBONACCI = [0, 1, 3, 5, 8];
 const ROOMS = [];
 
+app.get('/rooms', (req, res) => {
+
+  res.json(rooms)
+
+})
+
+
+
+
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
     const roomWithUser = ROOMS.find((room) =>

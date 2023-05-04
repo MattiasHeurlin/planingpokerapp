@@ -1,0 +1,29 @@
+.room-select-container {
+    margin: 0 auto;
+    text-align: center;
+    border: 1px solid #ccc;
+    padding: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px
+}
+
+
+
+.room {
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ccc;
+    height: 230px;
+    width: 270px;
+    background-color: rgba(12, 91, 92, 0.462);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    div {
+        display:grid;
+        grid-template-columns: 2fr 1fr;
+        
+    }
+}
+
