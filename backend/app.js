@@ -40,6 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
+
 const ROOMS = [
   {
     admin: 'Joe',
@@ -77,8 +78,9 @@ const ROOMS = [
 ]
   ;
 
+
 const FIBONACCI = [0, 1, 3, 5, 8];
-// const ROOMS = [];
+const ROOMS = [];
 
 app.get('/rooms', (req, res) => {
 
@@ -101,10 +103,10 @@ io.on('connection', (socket) => {
       return;
     }
 
-    const user = roomWithUser.find((user) => user.socketId == socket.id);
+    const user = roomWithUser.users.find((user) => user.socketId == socket.id);
     const indexOfUser = roomWithUser.users.indexOf(user);
 
-    roomWithUser.splice(indexOfUser, 1);
+    roomWithUser.users.splice(indexOfUser, 1);
 
     roomWithUser.usersWhoLeft.push(user);
 
