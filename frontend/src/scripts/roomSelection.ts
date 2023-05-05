@@ -1,4 +1,8 @@
 const app = document.querySelector<HTMLDivElement>("#app")!;
+import { socket } from "./main";
+
+
+
 
 export interface Rooms {
   admin: string;
@@ -41,10 +45,11 @@ export function renderRooms(rooms: Rooms[]) {
     input.type = "text";
     input.placeholder = 'Skriv in ditt namn'
     const button = document.createElement("button");
-    
     button.innerText = "Gå med";
     button.addEventListener("click", () => {
-      // joinRoom(input.value, i), Ska ske genom socket.io.
+      
+      socket.emit("joinRoom", {name: input.value, roomIndex: i, });
+      console.log(input.value, i)
     });
 
     inputContainer.append(input, button);
