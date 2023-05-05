@@ -40,41 +40,46 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// const ROOMS = [
-//   {
-//     admin: 'Joe',
-//     users: [{
-//       name: 'Doe',
-//       id:
-//     }, {
-//       name: 'Doe',
-//       id:
-//     }],
-//     usersWhoLeft: ['Donny'],
-//     topics: [
-//       {
-//         title: 'Skapa frontend',
-//         score: 5,
-//       },
-//       {
-//         title: 'Skapa backend',
-//         score: 5,
-//       },
-//     ],
-//     currentTopic: {
-//         title: topics[currentIndex].title,
-//         votes: [
-//           {user: user, score: score},
-//           {user: user, score: score},
-//           {user: user, score: score},
-//           {user: user, score: score}
-//         ]
-//     }
-//   },
-// ];
+const ROOMS = [
+  {
+    admin: 'Joe',
+    users: [
+      {
+        name: 'Doe',
+        id: 1,
+      },
+      {
+        name: 'Doe',
+        id: 2,
+      },
+    ],
+    usersWhoLeft: ['Donny'],
+    upcomingTopics: [
+      {
+        title: 'Skapa frontend',
+      },
+      {
+        title: 'Skapa backend',
+      },
+    ],
+    currentTopic: {
+      title: topics[currentIndex].title,
+      votes: [
+        { user: user, score: score },
+        { user: user, score: score },
+        { user: user, score: score },
+        { user: user, score: score },
+      ],
+    },
+    finishedTopics: [
+      { title: 'skapa admin-vy', score: 5 },
+      { title: 'random topic', score: 3 },
+    ],
+  },
+];
 
 const FIBONACCI = [0, 1, 3, 5, 8];
-const ROOMS = [];
+// const ROOMS = [];
 
 app.get('/rooms', (req, res) => {
 
@@ -187,6 +192,8 @@ io.on('connection', (socket) => {
         averageValue: fibonacciValue,
       };
 
+      room.currentTopic.score = fibonacciValue;
+
       return usersInRoom.forEach((user) =>
         io.to(user.socketId).emit('allVoted', lastUserScoreAndFibonacci)
       );
@@ -210,6 +217,40 @@ io.on('connection', (socket) => {
       room.topics[indexOfTopic] = room.topics[indexOfTopic - 1];
       room.topics[indexOfTopic - 1] = roomAndTopicAndDirection.topic;
     }
+  });
+
+  socket.on('startGame', (roomIndex) => {
+    const room = ROOMS[roomIndex];
+
+    room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
+
+    room.upcomingTopics.splice(0, 1);
+
+    room.users.forEach((user) => io.to(user.socketId).emit('startGame', room));
+  });
+
+  socket.on('nextTopic', (roomIndex) => {
+    const room = ROOMS[roomIndex];
+
+    room.finishedTopics.push(room.currentTopic);
+
+    room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
+
+    room.upcomingTopics.splice(0, 1);
+
+    room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
+  });
+
+  socket.on('endGame', (roomIndex) => {
+    const room = ROOMS[roomIndex];
+    const finishedTopics = room.finishedTopics;
+    const users = room.users;
+
+    ROOMS.splice(roomIndex, 1);
+
+    users.forEach((user) =>
+      io.to(user.socketId).emit('endGame', finishedTopics)
+    );
   });
 });
 
