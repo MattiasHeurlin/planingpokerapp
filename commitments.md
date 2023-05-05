@@ -22,5 +22,5 @@
 - Anton Janzon
 - Sandra Stridsman
 - Sofia Olsson
-- 
+- Mattias Heurlin
 
