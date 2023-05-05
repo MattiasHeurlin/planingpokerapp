@@ -43,6 +43,7 @@ app.use('/users', usersRouter);
 const ROOMS = [
   {
     admin: 'Joe',
+
     users: [{
       name: 'Doe',
       socketId: '123'
@@ -198,6 +199,8 @@ io.on('connection', (socket) => {
         averageValue: fibonacciValue,
       };
 
+      room.currentTopic.score = fibonacciValue;
+
       return usersInRoom.forEach((user) =>
         io.to(user.socketId).emit('allVoted', lastUserScoreAndFibonacci)
       );
@@ -221,6 +224,40 @@ io.on('connection', (socket) => {
       room.topics[indexOfTopic] = room.topics[indexOfTopic - 1];
       room.topics[indexOfTopic - 1] = roomAndTopicAndDirection.topic;
     }
+  });
+
+  socket.on('startGame', (roomIndex) => {
+    const room = ROOMS[roomIndex];
+
+    room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
+
+    room.upcomingTopics.splice(0, 1);
+
+    room.users.forEach((user) => io.to(user.socketId).emit('startGame', room));
+  });
+
+  socket.on('nextTopic', (roomIndex) => {
+    const room = ROOMS[roomIndex];
+
+    room.finishedTopics.push(room.currentTopic);
+
+    room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
+
+    room.upcomingTopics.splice(0, 1);
+
+    room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
+  });
+
+  socket.on('endGame', (roomIndex) => {
+    const room = ROOMS[roomIndex];
+    const finishedTopics = room.finishedTopics;
+    const users = room.users;
+
+    ROOMS.splice(roomIndex, 1);
+
+    users.forEach((user) =>
+      io.to(user.socketId).emit('endGame', finishedTopics)
+    );
   });
 });
 
