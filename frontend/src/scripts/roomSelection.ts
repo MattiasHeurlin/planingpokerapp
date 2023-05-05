@@ -8,7 +8,8 @@ export interface Rooms {
   admin: string;
   users: Users[];
   usersWhoLeft: string[];
-  topics: Topics[];
+  upcomingTopics: Topics[];
+  currentTopic: Topics[];
 }
 export interface Users {
   name: string;
