@@ -40,45 +40,48 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-// const ROOMS = [
-//   {
-//     admin: 'Joe',
-//     users: [{
-//       name: 'Doe',
-//       id:
-//     }, {
-//       name: 'Doe',
-//       id:
-//     }],
-//     usersWhoLeft: ['Donny'],
-//     topics: [
-//       {
-//         title: 'Skapa frontend',
-//         score: 5,
-//       },
-//       {
-//         title: 'Skapa backend',
-//         score: 5,
-//       },
-//     ],
-//     currentTopic: {
-//         title: topics[currentIndex].title,
-//         votes: [
-//           {user: user, score: score},
-//           {user: user, score: score},
-//           {user: user, score: score},
-//           {user: user, score: score}
-//         ]
-//     }
-//   },
-// ];
+const ROOMS = [
+  {
+    admin: 'Joe',
+    users: [{
+      name: 'Doe',
+      socketId: '123'
+     }, {
+      name: 'Doe',
+      socketId: '123'
+     }],
+    usersWhoLeft: ['Donny'],
+    /*
+    topics: [
+      {
+        title: 'Skapa frontend',
+        score: 5,
+      },
+      {
+        title: 'Skapa backend',
+        score: 5,
+      },
+    ],
+    currentTopic: {
+        title: topics[currentIndex].title,
+        votes: [
+          {user: user, score: score},
+          {user: user, score: score},
+          {user: user, score: score},
+          {user: user, score: score}
+        ]
+    }
+  */
+  },
+]
+  ;
 
 const FIBONACCI = [0, 1, 3, 5, 8];
-const ROOMS = [];
+// const ROOMS = [];
 
 app.get('/rooms', (req, res) => {
 
-  res.json(rooms)
+  res.json(ROOMS)
 
 })
 
@@ -86,6 +89,7 @@ app.get('/rooms', (req, res) => {
 
 
 io.on('connection', (socket) => {
+  /*
   socket.on('disconnect', () => {
     const roomWithUser = ROOMS.find((room) =>
       room.users.find((user) => user.socketId === socket.id)
@@ -107,7 +111,7 @@ io.on('connection', (socket) => {
       io.to(user.id).emit('userDisconnect', roomWithUser)
     );
   });
-
+  */
   socket.on('monitorRooms', () => {
     io.emit('monitorRooms', ROOMS);
   });
@@ -118,20 +122,26 @@ io.on('connection', (socket) => {
     //   roomIndex: number
     // }
 
-    ROOMS.forEach((room) => {
-      room.users.forEach((user) => {
-        if (user.userName === userAndRoomIndex.userName) {
-          console.log('User that name is already in the room.');
-          return;
-        }
-      });
-    });
     const roomIndex = userAndRoomIndex.roomIndex;
 
     const room = ROOMS[roomIndex];
-
-    room.users.push(userAndRoomIndex.user);
-
+    let userAlreadyInRoom = false;
+    room.users.forEach((user) => {
+      if (user.userName === userAndRoomIndex.name) {
+        console.log('User that name is already in the room.');
+        userAlreadyInRoom = true;
+        return;
+      }
+    });
+    if (userAlreadyInRoom) {
+      return;
+    }
+    const user = {
+      userName: userAndRoomIndex.name,
+      socketId: socket.id
+    }
+    room.users.push(user);
+    console.log(ROOMS[roomIndex])
     room.users.forEach((user) => io.to(user.id).emit('joinRoom', room));
   });
 
