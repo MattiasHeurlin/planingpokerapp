@@ -2,6 +2,8 @@ const app = document.querySelector<HTMLDivElement>("#app")!;
 import { socket } from "./main";
 
 
+
+
 export interface Rooms {
   admin: string;
   users: Users[];
@@ -45,7 +47,7 @@ export function renderRooms(rooms: Rooms[]) {
     const button = document.createElement("button");
     button.innerText = "Gå med";
     button.addEventListener("click", () => {
-      // joinRoom(input.value, i), Ska ske genom socket.io.
+      
       socket.emit("joinRoom", {name: input.value, roomIndex: i, });
       console.log(input.value, i)
     });

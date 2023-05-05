@@ -134,6 +134,7 @@ io.on('connection', (socket) => {
       }
     });
     if (userAlreadyInRoom) {
+        io.to(socket.id).emit('userAlreadyInRoom', room);
       return;
     }
     const user = {
