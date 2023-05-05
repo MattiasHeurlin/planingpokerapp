@@ -40,50 +40,50 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-const ROOMS = [
-  {
-    admin: 'Joe',
-    users: [
-      {
-        name: 'Doe',
-        id: 1,
-      },
-      {
-        name: 'Doe',
-        id: 2,
-      },
-    ],
-    usersWhoLeft: ['Donny'],
-    upcomingTopics: [
-      {
-        title: 'Skapa frontend',
-      },
-      {
-        title: 'Skapa backend',
-      },
-    ],
-    currentTopic: {
-      title: topics[currentIndex].title,
-      votes: [
-        { user: user, score: score },
-        { user: user, score: score },
-        { user: user, score: score },
-        { user: user, score: score },
-      ],
-    },
-    finishedTopics: [
-      { title: 'skapa admin-vy', score: 5 },
-      { title: 'random topic', score: 3 },
-    ],
-  },
-];
+// const ROOMS = [
+//   {
+//     admin: 'Joe',
+//     users: [
+//       {
+//         name: 'Doe',
+//         id: 1,
+//       },
+//       {
+//         name: 'Doe',
+//         id: 2,
+//       },
+//     ],
+//     usersWhoLeft: ['Donny'],
+//     upcomingTopics: [
+//       {
+//         title: 'Skapa frontend',
+//       },
+//       {
+//         title: 'Skapa backend',
+//       },
+//     ],
+//     currentTopic: {
+//       title: topics[currentIndex].title,
+//       votes: [
+//         { user: user, score: score },
+//         { user: user, score: score },
+//         { user: user, score: score },
+//         { user: user, score: score },
+//       ],
+//     },
+//     finishedTopics: [
+//       { title: 'skapa admin-vy', score: 5 },
+//       { title: 'random topic', score: 3 },
+//     ],
+//   },
+// ];
 
 const FIBONACCI = [0, 1, 3, 5, 8];
-// const ROOMS = [];
+const ROOMS = [];
 
 app.get('/rooms', (req, res) => {
 
-  res.json(rooms)
+  res.json(ROOMS)
 
 })
 
@@ -101,10 +101,10 @@ io.on('connection', (socket) => {
       return;
     }
 
-    const user = roomWithUser.find((user) => user.socketId == socket.id);
+    const user = roomWithUser.users.find((user) => user.socketId == socket.id);
     const indexOfUser = roomWithUser.users.indexOf(user);
 
-    roomWithUser.splice(indexOfUser, 1);
+    roomWithUser.users.splice(indexOfUser, 1);
 
     roomWithUser.usersWhoLeft.push(user);
 
