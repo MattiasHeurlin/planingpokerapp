@@ -50,7 +50,7 @@ const ROOMS = [
         id: 1,
       },
       {
-        name: 'Doe',
+        name: 'Foe',
         id: 2,
       },
     ],
@@ -128,7 +128,7 @@ io.on('connection', (socket) => {
     const room = ROOMS[roomIndex];
     let userAlreadyInRoom = false;
     room.users.forEach((user) => {
-      if (user.userName === userAndRoomIndex.name) {
+      if (user.name === userAndRoomIndex.name) {
         console.log('User that name is already in the room.');
         userAlreadyInRoom = true;
         return;
@@ -139,12 +139,12 @@ io.on('connection', (socket) => {
       return;
     }
     const user = {
-      userName: userAndRoomIndex.name,
+      name: userAndRoomIndex.name,
       socketId: socket.id
     }
     room.users.push(user);
     console.log(ROOMS[roomIndex])
-    room.users.forEach((user) => io.to(user.id).emit('joinRoom', room));
+    room.users.forEach((user) => io.to(user.socketId).emit('joinRoom', room));
   });
 
   socket.on('leaveRoom', (userAndRoomIndex) => {
