@@ -33,8 +33,8 @@ export function renderRooms(rooms: Room[]) {
   const div = document.createElement("div");
   div.classList.add("room-select-container");
   const main = document.querySelector<HTMLDivElement>(".main-content");
-
-  
+  const adminText = document.createElement("p");
+  adminText.innerText = "Rum Admin:";
 
   for (let i = 0; i < rooms.length; i++) {
     const room = rooms[i];
@@ -55,7 +55,7 @@ export function renderRooms(rooms: Room[]) {
     });
 
     inputContainer.append(input, button);
-    roomDiv.append(roomName, inputContainer);
+    roomDiv.append(adminText ,roomName, inputContainer);
     div.append(roomDiv);
   };
   main!.append(div);

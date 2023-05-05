@@ -7,10 +7,10 @@ const app = document.querySelector('#app');
 
 app!.innerHTML = `
   <div class="grid-container">
-    <header class="header">Header</header>
-    <aside class="upcoming-topics">Upcoming topics</aside>
-    <main class="main-content">Main content</main>
-    <section class="previous-topics">Previous topics</section>
+    <header class="header"><h1>Header<h1></header>
+    <aside class="upcoming-topics"><h2>Upcoming topics<h2></aside>
+    <main class="main-content"><h2>Öppna Rum<h2></main>
+    <section class="previous-topics"><h2>Previous topics<h2></section>
     <footer class="footer"></footer>
   </div>
 `

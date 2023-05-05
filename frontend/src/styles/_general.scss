@@ -1,3 +1,12 @@
 body {
-  background-color: rgba(1, 0, 59, 0.54);
+  background-color: $base-100;
+  color: $primary;
+}
+
+h1 {
+  font-size: 2.5rem;
+}
+
+h2 {
+  font-size: 2rem;
 }
