@@ -1,0 +1,36 @@
+.adminLoginContainer {
+    margin: auto;
+    margin-top: 70px;
+    font-family: sans-serif;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: 600px;
+    gap: 30px;
+}
+
+.adminBtn, .adminLoginBtn {
+    border: none;
+    border-radius: 5px;
+    padding: 10px 30px 10px 30px;
+    color: rgb(252, 252, 252);
+    background-color: rgb(34, 43, 73);
+}
+
+.adminBtn {
+    position: fixed;
+    right: 20px;
+    top: 20px
+}
+
+.usernameLabel, .passwordLabel {
+    display: flex;
+    flex-direction: column;
+}
+
+.adminLoginUsername, .adminLoginPassword {
+    border: none;
+    border-radius: 5px;
+    padding: 15px 40px 15px 40px;
+    background-color: rgb(145, 190, 136);
+}
