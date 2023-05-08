@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const adminRouter = require('./routes/admin');
 const { stringify } = require('querystring');
 
 const app = express();
@@ -39,20 +40,20 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/admin', adminRouter);
 
+// const ROOMS = [
+//   {
+//     admin: 'Joe',
 
-const ROOMS = [
-  {
-    admin: 'Joe',
-
-    users: [{
-      name: 'Doe',
-      socketId: '123'
-     }, {
-      name: 'Doe',
-      socketId: '123'
-     }],
-    usersWhoLeft: ['Donny'],
+//     users: [{
+//       name: 'Doe',
+//       socketId: '123'
+//      }, {
+//       name: 'Doe',
+//       socketId: '123'
+//      }],
+//     usersWhoLeft: ['Donny'],
     /*
     topics: [
       {
@@ -74,9 +75,9 @@ const ROOMS = [
         ]
     }
   */
-  },
-]
-  ;
+//   },
+// ]
+//   ;
 
 
 const FIBONACCI = [0, 1, 3, 5, 8];
