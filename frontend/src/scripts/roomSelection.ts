@@ -32,6 +32,7 @@ export function renderRooms(rooms: Room[]) {
   const div = document.createElement('div');
   div.classList.add('room-select-container');
   const main = document.querySelector<HTMLDivElement>('.main-content');
+  main!.innerHTML = '';
   const adminText = document.createElement('p');
   adminText.innerText = 'Rum Admin:';
 
