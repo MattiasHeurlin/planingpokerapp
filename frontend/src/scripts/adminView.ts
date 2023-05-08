@@ -5,6 +5,7 @@ export function printAdminView (){
     createUpcomingTopics();
     createStartVoting();
     createNextTopicBtn();
+    createCurrentTopic();
 }
 
 function createAddNewTopic(){
@@ -65,6 +66,36 @@ function createNextTopicBtn(){
 
     adminContainer.appendChild(nextTopicContainer);
     nextTopicContainer.appendChild(nextTopicBtn);
+}
+
+function createCurrentTopic(){
+    const currentTopicContainer = document.createElement('div') as HTMLDivElement;
+    const currentTopicTitleContainer = document.createElement('div') as HTMLDivElement;
+    const curretnTopicTitle = document.createElement('p') as HTMLParagraphElement;
+    const userAndAverageValueContainer = document.createElement('div') as HTMLDivElement;
+    const userContainer = document.createElement('div') as HTMLDivElement;
+    const userName = document.createElement('p') as HTMLParagraphElement;
+    const userPoints = document.createElement('p') as HTMLParagraphElement;
+    const averageValueContainer = document.createElement('div') as HTMLDivElement;
+    const averageValueTitle = document.createElement('p') as HTMLParagraphElement;
+    const averageValue = document.createElement('p') as HTMLParagraphElement;
+
+    curretnTopicTitle.innerText = 'Test topic just nu';
+    userName.innerText = 'Test Namn';
+    userPoints.innerText = 'Tänker...';
+    averageValueTitle.innerText = 'Medelvärde';
+    averageValue.innerText = 'Test 123';
+
+    adminContainer.appendChild(currentTopicContainer);
+    currentTopicContainer.appendChild(currentTopicTitleContainer);
+    currentTopicTitleContainer.appendChild(curretnTopicTitle);
+    currentTopicContainer.appendChild(userAndAverageValueContainer);
+    userAndAverageValueContainer.appendChild(userContainer);
+    userContainer.appendChild(userName);
+    userContainer.appendChild(userPoints);
+    userAndAverageValueContainer.appendChild(averageValueContainer);
+    averageValueContainer.appendChild(averageValueTitle);
+    averageValueContainer.appendChild(averageValue);
 }
 
 
