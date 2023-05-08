@@ -1,4 +1,4 @@
-const adminContainer = document.querySelector('#app') as HTMLDivElement;
+const adminContainer = document.querySelector('#adminView') as HTMLDivElement;
 
 export function printAdminView (){
     createAddNewTopic();
