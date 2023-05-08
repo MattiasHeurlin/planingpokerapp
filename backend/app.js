@@ -40,7 +40,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-
 const ROOMS = [
   {
     admin: 'Joe',
@@ -64,9 +63,9 @@ const ROOMS = [
       },
     ],
     currentTopic: {
-      title: "Nuvarande ämne",
+      title: 'Nuvarande ämne',
       votes: [
-      //  { user: user, score: score },
+        //  { user: user, score: score },
       ],
     },
     finishedTopics: [
@@ -76,21 +75,14 @@ const ROOMS = [
   },
 ];
 
-
 const FIBONACCI = [0, 1, 3, 5, 8];
 // const ROOMS = [];
 
 app.get('/rooms', (req, res) => {
-
-  res.json(ROOMS)
-
-})
-
-
-
+  res.json(ROOMS);
+});
 
 io.on('connection', (socket) => {
-  
   socket.on('disconnect', () => {
     const roomWithUser = ROOMS.find((room) =>
       room.users.find((user) => user.socketId === socket.id)
@@ -112,7 +104,7 @@ io.on('connection', (socket) => {
       io.to(user.id).emit('userDisconnect', roomWithUser)
     );
   });
-  
+
   socket.on('monitorRooms', () => {
     io.emit('monitorRooms', ROOMS);
   });
@@ -128,22 +120,23 @@ io.on('connection', (socket) => {
     const room = ROOMS[roomIndex];
     let userAlreadyInRoom = false;
     room.users.forEach((user) => {
-      if (user.name === userAndRoomIndex.name) {
+      if (user.name === userAndRoomIndex.user.name) {
         console.log('User that name is already in the room.');
         userAlreadyInRoom = true;
         return;
       }
     });
     if (userAlreadyInRoom) {
-        io.to(socket.id).emit('userAlreadyInRoom', room);
+      io.to(socket.id).emit('userAlreadyInRoom', room);
       return;
     }
     const user = {
-      name: userAndRoomIndex.name,
-      socketId: socket.id
-    }
+      id: userAndRoomIndex.user.id,
+      name: userAndRoomIndex.user.name,
+      socketId: socket.id,
+    };
     room.users.push(user);
-    console.log(ROOMS[roomIndex])
+    console.log(ROOMS[roomIndex]);
     room.users.forEach((user) => io.to(user.socketId).emit('joinRoom', room));
   });
 
@@ -213,7 +206,9 @@ io.on('connection', (socket) => {
     const room = ROOMS[roomAndTopicAndDirection.roomIndex];
     const direction = roomAndTopicAndDirection.direction;
 
-    const indexOfTopic = room.upcomingTopics.indexOf(roomAndTopicAndDirection.topic);
+    const indexOfTopic = room.upcomingTopics.indexOf(
+      roomAndTopicAndDirection.topic
+    );
 
     if (direction == 'down') {
       // handle swap down
