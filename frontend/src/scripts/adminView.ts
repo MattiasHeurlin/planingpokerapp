@@ -4,6 +4,7 @@ export function printAdminView (){
     createAddNewTopic();
     createUpcomingTopics();
     createStartVoting();
+    createNextTopicBtn();
 }
 
 function createAddNewTopic(){
@@ -54,6 +55,16 @@ function createStartVoting(){
 
     adminContainer.appendChild(startVotingContainer);
     startVotingContainer.appendChild(startVotingBtn);
+}
+
+function createNextTopicBtn(){
+    const nextTopicContainer = document.createElement('div') as HTMLDivElement;
+    const nextTopicBtn = document.createElement('button') as HTMLButtonElement;
+    
+    nextTopicBtn.innerText = 'Nästa topic';
+
+    adminContainer.appendChild(nextTopicContainer);
+    nextTopicContainer.appendChild(nextTopicBtn);
 }
 
 
