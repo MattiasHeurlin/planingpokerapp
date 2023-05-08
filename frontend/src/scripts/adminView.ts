@@ -6,6 +6,7 @@ export function printAdminView (){
     createStartVoting();
     createNextTopicBtn();
     createCurrentTopic();
+    createPreviousTopics();
 }
 
 function createAddNewTopic(){
@@ -96,6 +97,21 @@ function createCurrentTopic(){
     userAndAverageValueContainer.appendChild(averageValueContainer);
     averageValueContainer.appendChild(averageValueTitle);
     averageValueContainer.appendChild(averageValue);
+}
+
+function createPreviousTopics(){
+    const previousTopicContainer = document.createElement('div') as HTMLDivElement;
+    const previousTopicsTitle = document.createElement('h3') as HTMLHeadingElement;
+    const topicContainer = document.createElement('div') as HTMLDivElement;
+    const previousTopic = document.createElement('p') as HTMLParagraphElement;
+
+    previousTopicsTitle.innerText = 'Tidigare topics';
+    previousTopic.innerText =  'Test';
+
+    adminContainer.appendChild(previousTopicContainer);
+    previousTopicContainer.appendChild(previousTopicsTitle);
+    previousTopicContainer.appendChild(topicContainer);
+    topicContainer.appendChild(previousTopic);
 }
 
 
