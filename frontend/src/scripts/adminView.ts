@@ -7,6 +7,7 @@ export function printAdminView (){
     createNextTopicBtn();
     createCurrentTopic();
     createPreviousTopics();
+    createEndBtn();
 }
 
 function createAddNewTopic(){
@@ -112,6 +113,16 @@ function createPreviousTopics(){
     previousTopicContainer.appendChild(previousTopicsTitle);
     previousTopicContainer.appendChild(topicContainer);
     topicContainer.appendChild(previousTopic);
+}
+
+function createEndBtn(){
+    const endContainer = document.createElement('div') as HTMLDivElement;
+    const endBtn = document.createElement('button') as HTMLButtonElement;
+    
+    endBtn.innerText = 'Avsluta';
+
+    adminContainer.appendChild(endContainer);
+    endContainer.appendChild(endBtn);
 }
 
 
