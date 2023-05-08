@@ -1,5 +1,6 @@
 const adminContainer = document.querySelector('#adminView') as HTMLDivElement;
 adminContainer.classList.add('grid')
+
 export function printAdminView (){
     createAddNewTopic();
     createUpcomingTopics();
@@ -9,6 +10,21 @@ export function printAdminView (){
     createPreviousTopics();
     createEndBtn();
 }
+
+export default function getRoom(/*e*/) {
+
+    //let id = e.target.id;
+
+    fetch(`http://localhost:3000/rooms/${id}`)
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data)
+        if (data.length === 0) {
+          console.log("No rooms found");
+        }
+        printAdminView();
+      });
+  }
 
 function createAddNewTopic(){
     const addNewTopicContainer = document.createElement('div') as HTMLDivElement;
