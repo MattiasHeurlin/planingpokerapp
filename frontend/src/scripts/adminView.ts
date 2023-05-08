@@ -1,5 +1,5 @@
 const adminContainer = document.querySelector('#adminView') as HTMLDivElement;
-
+adminContainer.classList.add('grid')
 export function printAdminView (){
     createAddNewTopic();
     createUpcomingTopics();
@@ -16,6 +16,7 @@ function createAddNewTopic(){
     const addTopicInput = document.createElement('input') as HTMLInputElement;
     const addNewTopicBtn = document.createElement('button') as HTMLButtonElement;
 
+    addNewTopicContainer.classList.add('admin-add-topic')
     addTopicTitle.innerText = 'Lägg till topic';
     addTopicInput.placeholder = 'Ny topic';
     addNewTopicBtn.innerText = 'Lägg till';
@@ -35,6 +36,7 @@ function createUpcomingTopics(){
     const moveTopicUpBtn = document.createElement('button') as HTMLButtonElement; 
     const moveTopicDownBtn = document.createElement('button') as HTMLButtonElement;
     
+    upcomingTopicsContainer.classList.add('admin-upcoming-topics')
     upcomingTopicsTitle.innerText = 'Kommande topics';
     removeUpcomingTopicBtn.innerText = '-';
     upcomingTopic.innerText =  'Test';
@@ -54,6 +56,7 @@ function createStartVoting(){
     const startVotingContainer = document.createElement('div') as HTMLDivElement;
     const startVotingBtn = document.createElement('button') as HTMLButtonElement;
     
+    startVotingContainer.classList.add('admin-start-vote')
     startVotingBtn.innerText = 'Starta röstningen';
 
     adminContainer.appendChild(startVotingContainer);
@@ -64,6 +67,7 @@ function createNextTopicBtn(){
     const nextTopicContainer = document.createElement('div') as HTMLDivElement;
     const nextTopicBtn = document.createElement('button') as HTMLButtonElement;
     
+    nextTopicContainer.classList.add('admin-next-topic')
     nextTopicBtn.innerText = 'Nästa topic';
 
     adminContainer.appendChild(nextTopicContainer);
@@ -82,6 +86,7 @@ function createCurrentTopic(){
     const averageValueTitle = document.createElement('p') as HTMLParagraphElement;
     const averageValue = document.createElement('p') as HTMLParagraphElement;
 
+    currentTopicContainer.classList.add('admin-main-content')
     curretnTopicTitle.innerText = 'Test topic just nu';
     userName.innerText = 'Test Namn';
     userPoints.innerText = 'Tänker...';
@@ -106,6 +111,7 @@ function createPreviousTopics(){
     const topicContainer = document.createElement('div') as HTMLDivElement;
     const previousTopic = document.createElement('p') as HTMLParagraphElement;
 
+    previousTopicContainer.classList.add('admin-previous-topics')
     previousTopicsTitle.innerText = 'Tidigare topics';
     previousTopic.innerText =  'Test';
 
@@ -119,6 +125,7 @@ function createEndBtn(){
     const endContainer = document.createElement('div') as HTMLDivElement;
     const endBtn = document.createElement('button') as HTMLButtonElement;
     
+    endContainer.classList.add('admin-end')
     endBtn.innerText = 'Avsluta';
 
     adminContainer.appendChild(endContainer);
