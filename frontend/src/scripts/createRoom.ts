@@ -23,6 +23,7 @@ export function createRoom(roomAdmin: string) {
   const newRoom = new Room(roomAdmin);
 
   socket.emit('createRoom', newRoom);
+  // renderAdminRoomView()   <-- Ändra till den funktionen som renderar admins vy i rummet när den är klar
 }
 
 export function createRoomElements() {
