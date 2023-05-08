@@ -1,30 +1,35 @@
+//import { Room } from "./roomSelection";
+//import { renderUserCards } from "./userView";
+import { socket } from "./main";
+
 const adminContainer = document.querySelector('#adminView') as HTMLDivElement;
 adminContainer.classList.add('grid')
 
-export function printAdminView (){
+export function printAdminView (/*room:Room*/){
     createAddNewTopic();
-    createUpcomingTopics();
+    createUpcomingTopicsAdmin();
     createStartVoting();
     createNextTopicBtn();
     createCurrentTopic();
     createPreviousTopics();
     createEndBtn();
+    //renderUserCards(room.users);
 }
 
-export default function getRoom(/*e*/) {
+// export default function getRoom(/*e*/) {
 
-    //let id = e.target.id;
+//     //let id = e.target.id;
 
-    fetch(`http://localhost:3000/rooms/${id}`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data)
-        if (data.length === 0) {
-          console.log("No rooms found");
-        }
-        printAdminView();
-      });
-  }
+//     fetch(`http://localhost:3000/rooms/${id}`)
+//       .then((res) => res.json())
+//       .then((data) => {
+//         console.log(data)
+//         if (data.length === 0) {
+//           console.log("No rooms found");
+//         }
+//         printAdminView(/*data*/);
+//       });
+//   }
 
 function createAddNewTopic(){
     const addNewTopicContainer = document.createElement('div') as HTMLDivElement;
@@ -43,7 +48,8 @@ function createAddNewTopic(){
     addNewTopicContainer.appendChild(addNewTopicBtn);
 }
 
-function createUpcomingTopics(){
+function createUpcomingTopicsAdmin(/*room*/){
+
     const upcomingTopicsContainer = document.createElement('div') as HTMLDivElement;
     const upcomingTopicsTitle = document.createElement('h3') as HTMLHeadingElement;
     const topicContainer = document.createElement('div') as HTMLDivElement;
@@ -52,12 +58,21 @@ function createUpcomingTopics(){
     const moveTopicUpBtn = document.createElement('button') as HTMLButtonElement; 
     const moveTopicDownBtn = document.createElement('button') as HTMLButtonElement;
     
+    socket.on('changeTopicOrder', (room) => {
+        createUpcomingTopicsAdmin(/*room*/);
+    })
+
     upcomingTopicsContainer.classList.add('admin-upcoming-topics')
     upcomingTopicsTitle.innerText = 'Kommande topics';
     removeUpcomingTopicBtn.innerText = '-';
     upcomingTopic.innerText =  'Test';
     moveTopicDownBtn.innerText = 'Ner';
     moveTopicUpBtn.innerText = 'Upp';
+
+    moveTopicDownBtn.addEventListener('click', (e: any) => {
+        const direction = e.currentTarget.innerText.toLowerCase()
+        socket.emit('changeTopicOrder', direction)
+    })
 
     adminContainer.appendChild(upcomingTopicsContainer);
     upcomingTopicsContainer.appendChild(upcomingTopicsTitle);
@@ -95,17 +110,12 @@ function createCurrentTopic(){
     const currentTopicTitleContainer = document.createElement('div') as HTMLDivElement;
     const curretnTopicTitle = document.createElement('p') as HTMLParagraphElement;
     const userAndAverageValueContainer = document.createElement('div') as HTMLDivElement;
-    const userContainer = document.createElement('div') as HTMLDivElement;
-    const userName = document.createElement('p') as HTMLParagraphElement;
-    const userPoints = document.createElement('p') as HTMLParagraphElement;
     const averageValueContainer = document.createElement('div') as HTMLDivElement;
     const averageValueTitle = document.createElement('p') as HTMLParagraphElement;
     const averageValue = document.createElement('p') as HTMLParagraphElement;
 
     currentTopicContainer.classList.add('admin-main-content')
     curretnTopicTitle.innerText = 'Test topic just nu';
-    userName.innerText = 'Test Namn';
-    userPoints.innerText = 'Tänker...';
     averageValueTitle.innerText = 'Medelvärde';
     averageValue.innerText = 'Test 123';
 
@@ -113,9 +123,6 @@ function createCurrentTopic(){
     currentTopicContainer.appendChild(currentTopicTitleContainer);
     currentTopicTitleContainer.appendChild(curretnTopicTitle);
     currentTopicContainer.appendChild(userAndAverageValueContainer);
-    userAndAverageValueContainer.appendChild(userContainer);
-    userContainer.appendChild(userName);
-    userContainer.appendChild(userPoints);
     userAndAverageValueContainer.appendChild(averageValueContainer);
     averageValueContainer.appendChild(averageValueTitle);
     averageValueContainer.appendChild(averageValue);
