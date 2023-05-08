@@ -1,11 +1,12 @@
 const adminContainer = document.querySelector('#app') as HTMLDivElement;
 
 export function printAdminView (){
-    createdAddNewTopic();
-    createdUpcomingTopics();
+    createAddNewTopic();
+    createUpcomingTopics();
+    createStartVoting();
 }
 
-function createdAddNewTopic(){
+function createAddNewTopic(){
     const addNewTopicContainer = document.createElement('div') as HTMLDivElement;
     const addTopicTitle = document.createElement('p') as HTMLParagraphElement;
     const addTopicInput = document.createElement('input') as HTMLInputElement;
@@ -21,7 +22,7 @@ function createdAddNewTopic(){
     addNewTopicContainer.appendChild(addNewTopicBtn);
 }
 
-function createdUpcomingTopics(){
+function createUpcomingTopics(){
     const upcomingTopicsContainer = document.createElement('div') as HTMLDivElement;
     const upcomingTopicsTitle = document.createElement('h3') as HTMLHeadingElement;
     const topicContainer = document.createElement('div') as HTMLDivElement;
@@ -43,6 +44,16 @@ function createdUpcomingTopics(){
     topicContainer.appendChild(upcomingTopic);
     topicContainer.appendChild(moveTopicUpBtn);
     topicContainer.appendChild(moveTopicDownBtn);
+}
+
+function createStartVoting(){
+    const startVotingContainer = document.createElement('div') as HTMLDivElement;
+    const startVotingBtn = document.createElement('button') as HTMLButtonElement;
+    
+    startVotingBtn.innerText = 'Starta röstningen';
+
+    adminContainer.appendChild(startVotingContainer);
+    startVotingContainer.appendChild(startVotingBtn);
 }
 
 
