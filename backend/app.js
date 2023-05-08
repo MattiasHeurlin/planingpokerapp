@@ -44,43 +44,41 @@ app.use('/users', usersRouter);
 const ROOMS = [
   {
     admin: 'Joe',
-
-    users: [{
-      name: 'Doe',
-      socketId: '123'
-     }, {
-      name: 'Doe',
-      socketId: '123'
-     }],
+    users: [
+      {
+        name: 'Doe',
+        id: 1,
+      },
+      {
+        name: 'Foe',
+        id: 2,
+      },
+    ],
     usersWhoLeft: ['Donny'],
-    /*
-    topics: [
+    upcomingTopics: [
       {
         title: 'Skapa frontend',
-        score: 5,
       },
       {
         title: 'Skapa backend',
-        score: 5,
       },
     ],
     currentTopic: {
-        title: topics[currentIndex].title,
-        votes: [
-          {user: user, score: score},
-          {user: user, score: score},
-          {user: user, score: score},
-          {user: user, score: score}
-        ]
-    }
-  */
+      title: "Nuvarande ämne",
+      votes: [
+      //  { user: user, score: score },
+      ],
+    },
+    finishedTopics: [
+      { title: 'skapa admin-vy', score: 5 },
+      { title: 'random topic', score: 3 },
+    ],
   },
-]
-  ;
+];
 
 
 const FIBONACCI = [0, 1, 3, 5, 8];
-const ROOMS = [];
+// const ROOMS = [];
 
 app.get('/rooms', (req, res) => {
 
@@ -92,7 +90,7 @@ app.get('/rooms', (req, res) => {
 
 
 io.on('connection', (socket) => {
-  /*
+  
   socket.on('disconnect', () => {
     const roomWithUser = ROOMS.find((room) =>
       room.users.find((user) => user.socketId === socket.id)
@@ -114,7 +112,7 @@ io.on('connection', (socket) => {
       io.to(user.id).emit('userDisconnect', roomWithUser)
     );
   });
-  */
+  
   socket.on('monitorRooms', () => {
     io.emit('monitorRooms', ROOMS);
   });
@@ -130,7 +128,7 @@ io.on('connection', (socket) => {
     const room = ROOMS[roomIndex];
     let userAlreadyInRoom = false;
     room.users.forEach((user) => {
-      if (user.userName === userAndRoomIndex.name) {
+      if (user.name === userAndRoomIndex.name) {
         console.log('User that name is already in the room.');
         userAlreadyInRoom = true;
         return;
@@ -141,12 +139,12 @@ io.on('connection', (socket) => {
       return;
     }
     const user = {
-      userName: userAndRoomIndex.name,
+      name: userAndRoomIndex.name,
       socketId: socket.id
     }
     room.users.push(user);
     console.log(ROOMS[roomIndex])
-    room.users.forEach((user) => io.to(user.id).emit('joinRoom', room));
+    room.users.forEach((user) => io.to(user.socketId).emit('joinRoom', room));
   });
 
   socket.on('leaveRoom', (userAndRoomIndex) => {
@@ -215,16 +213,16 @@ io.on('connection', (socket) => {
     const room = ROOMS[roomAndTopicAndDirection.roomIndex];
     const direction = roomAndTopicAndDirection.direction;
 
-    const indexOfTopic = room.topics.indexOf(roomAndTopicAndDirection.topic);
+    const indexOfTopic = room.upcomingTopics.indexOf(roomAndTopicAndDirection.topic);
 
     if (direction == 'down') {
       // handle swap down
-      room.topics[indexOfTopic] = room.topics[indexOfTopic + 1];
-      room.topics[indexOfTopic + 1] = roomAndTopicAndDirection.topic;
+      room.upcomingTopics[indexOfTopic] = room.upcomingTopics[indexOfTopic + 1];
+      room.upcomingTopics[indexOfTopic + 1] = roomAndTopicAndDirection.topic;
     } else {
       // handle swap up
-      room.topics[indexOfTopic] = room.topics[indexOfTopic - 1];
-      room.topics[indexOfTopic - 1] = roomAndTopicAndDirection.topic;
+      room.upcomingTopics[indexOfTopic] = room.upcomingTopics[indexOfTopic - 1];
+      room.upcomingTopics[indexOfTopic - 1] = roomAndTopicAndDirection.topic;
     }
   });
 

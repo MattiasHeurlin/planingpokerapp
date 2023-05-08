@@ -1,22 +1,22 @@
-const app = document.querySelector<HTMLDivElement>("#app")!;
 import { socket } from "./main";
 
 
 
 
-export interface Rooms {
+export interface Room {
   admin: string;
-  users: Users[];
+  users: User[];
   usersWhoLeft: string[];
-  topics: Topics[];
+  upcomingTopics: Topic[];
+  currentTopic: Topic[];
 }
-export interface Users {
+export interface User {
   name: string;
-  id: string; // socket id
+  id?: string; // socket id
 }
-export interface Topics {
+export interface Topic {
   title: string;
-  score: number;
+  score?: number;
 }
 export function getAllRooms() {
   fetch("http://localhost:3000/rooms")
@@ -29,10 +29,12 @@ export function getAllRooms() {
     });
 }
 
-export function renderRooms(rooms: Rooms[]) {
+export function renderRooms(rooms: Room[]) {
   const div = document.createElement("div");
   div.classList.add("room-select-container");
-  
+  const main = document.querySelector<HTMLDivElement>(".main-content");
+  const adminText = document.createElement("p");
+  adminText.innerText = "Rum Admin:";
 
   for (let i = 0; i < rooms.length; i++) {
     const room = rooms[i];
@@ -53,9 +55,8 @@ export function renderRooms(rooms: Rooms[]) {
     });
 
     inputContainer.append(input, button);
-    roomDiv.append(roomName, inputContainer);
+    roomDiv.append(adminText ,roomName, inputContainer);
     div.append(roomDiv);
-  }
-;
-  app.append(div);
+  };
+  main!.append(div);
 }
