@@ -8,7 +8,7 @@ adminContainer.classList.add('grid')
 export function printAdminView (room: Room){
     console.log(room)
     createAddNewTopic();
-    createUpcomingTopicsAdmin();
+    createUpcomingTopicsAdmin(room);
     createStartVoting();
     createNextTopicBtn();
     createCurrentTopic(room);
@@ -49,35 +49,41 @@ function createAddNewTopic(){
     addNewTopicContainer.appendChild(addNewTopicBtn);
 }
 
-function createUpcomingTopicsAdmin(/*room*/){
+function createUpcomingTopicsAdmin(room: Room){
 
     const upcomingTopicsContainer = document.createElement('div') as HTMLDivElement;
     const upcomingTopicsTitle = document.createElement('h3') as HTMLHeadingElement;
-    const topicContainer = document.createElement('div') as HTMLDivElement;
-    const removeUpcomingTopicBtn = document.createElement('button') as HTMLButtonElement;
-    const upcomingTopic = document.createElement('p') as HTMLParagraphElement;
-    const moveTopicUpBtn = document.createElement('button') as HTMLButtonElement; 
-    const moveTopicDownBtn = document.createElement('button') as HTMLButtonElement;
-
     upcomingTopicsContainer.classList.add('admin-upcoming-topics')
     upcomingTopicsTitle.innerText = 'Kommande topics';
-    removeUpcomingTopicBtn.innerText = '-';
-    upcomingTopic.innerText =  'Test';
-    moveTopicDownBtn.innerText = 'Ner';
-    moveTopicUpBtn.innerText = 'Upp';
-
-    moveTopicDownBtn.addEventListener('click', (e: any) => {
-        const direction = e.currentTarget.innerText.toLowerCase()
-        socket.emit('changeTopicOrder', direction)
-    })
-
     adminContainer.appendChild(upcomingTopicsContainer);
     upcomingTopicsContainer.appendChild(upcomingTopicsTitle);
-    upcomingTopicsContainer.appendChild(topicContainer);
-    topicContainer.appendChild(removeUpcomingTopicBtn);
-    topicContainer.appendChild(upcomingTopic);
-    topicContainer.appendChild(moveTopicUpBtn);
-    topicContainer.appendChild(moveTopicDownBtn);
+
+    for (let i = 0; i < room.upcomingTopics.length; i++) {
+       const topicContainer = document.createElement('div') as HTMLDivElement;
+        const removeUpcomingTopicBtn = document.createElement('button') as HTMLButtonElement;
+        const upcomingTopic = document.createElement('p') as HTMLParagraphElement;
+        const moveTopicUpBtn = document.createElement('button') as HTMLButtonElement; 
+        const moveTopicDownBtn = document.createElement('button') as HTMLButtonElement;
+        
+        removeUpcomingTopicBtn.innerText = '-';
+        removeUpcomingTopicBtn.id = `${i}`;
+        upcomingTopic.innerText =  room.upcomingTopics[i].title;
+        moveTopicDownBtn.innerText = 'Ner';
+        moveTopicDownBtn.id = `${i}`;
+        moveTopicUpBtn.innerText = 'Upp';
+        moveTopicUpBtn.id = `${i}`;
+
+        upcomingTopicsContainer.appendChild(topicContainer);
+        topicContainer.appendChild(removeUpcomingTopicBtn);
+        topicContainer.appendChild(upcomingTopic);
+        topicContainer.appendChild(moveTopicUpBtn);
+        topicContainer.appendChild(moveTopicDownBtn);
+    }
+
+    // moveTopicDownBtn.addEventListener('click', (e: any) => {
+    //     const direction = e.currentTarget.innerText.toLowerCase()
+    //     socket.emit('changeTopicOrder', direction)
+    // })
 }
 
 function createStartVoting(){
