@@ -40,7 +40,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 
-
 const ROOMS = [
   {
     admin: 'Joe',
@@ -64,9 +63,9 @@ const ROOMS = [
       },
     ],
     currentTopic: {
-      title: "Nuvarande ämne",
+      title: 'Nuvarande ämne',
       votes: [
-      //  { user: user, score: score },
+        //  { user: user, score: score },
       ],
     },
     finishedTopics: [
@@ -75,7 +74,6 @@ const ROOMS = [
     ],
   },
 ];
-
 
 const FIBONACCI = [0, 1, 3, 5, 8];
 // const ROOMS = [];
@@ -87,7 +85,6 @@ app.get('/rooms', (req, res) => {
 })
 
 io.on('connection', (socket) => {
-  
   socket.on('disconnect', () => {
     const roomWithUser = ROOMS.find((room) =>
       room.users.find((user) => user.socketId === socket.id)
@@ -109,9 +106,16 @@ io.on('connection', (socket) => {
       io.to(user.id).emit('userDisconnect', roomWithUser)
     );
   });
-  
+
   socket.on('monitorRooms', () => {
-    io.emit('monitorRooms', ROOMS);
+    io.emit('monitorRooms');
+  });
+
+  socket.on('createRoom', (room) => {
+    ROOMS.push(room);
+
+    io.emit('monitorRooms');
+    io.to(socket.id).emit('createRoom', room);
   });
 
   socket.on('joinRoom', (userAndRoomIndex) => {
@@ -132,15 +136,15 @@ io.on('connection', (socket) => {
       }
     });
     if (userAlreadyInRoom) {
-        io.to(socket.id).emit('userAlreadyInRoom', room);
+      io.to(socket.id).emit('userAlreadyInRoom', room);
       return;
     }
     const user = {
       name: userAndRoomIndex.name,
-      socketId: socket.id
-    }
+      socketId: socket.id,
+    };
     room.users.push(user);
-    console.log(ROOMS[roomIndex])
+    console.log(ROOMS[roomIndex]);
     room.users.forEach((user) => io.to(user.socketId).emit('joinRoom', room));
   });
 
@@ -210,7 +214,9 @@ io.on('connection', (socket) => {
     const room = ROOMS[roomAndTopicAndDirection.roomIndex];
     const direction = roomAndTopicAndDirection.direction;
 
-    const indexOfTopic = room.upcomingTopics.indexOf(roomAndTopicAndDirection.topic);
+    const indexOfTopic = room.upcomingTopics.indexOf(
+      roomAndTopicAndDirection.topic
+    );
 
     if (direction == 'ner') {
       // handle swap down
