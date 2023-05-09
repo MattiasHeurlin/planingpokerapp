@@ -1,7 +1,7 @@
 import '../style.css';
 import { io } from "socket.io-client";
 import { getAllRooms } from './roomSelection';
-import { renderUserView } from './userView';
+import { renderRunningRoom, renderUserView } from './userView';
 import { Room } from './roomSelection';
 const app = document.querySelector('#app');
 
@@ -38,6 +38,12 @@ socket.on("joinRoom", (room: Room) => {
   renderUserView(room);
   
   
+})
+
+
+socket.on("monitorRoom", (room: Room) => {
+  console.log(room)
+  renderRunningRoom(room);
 })
 
 init();

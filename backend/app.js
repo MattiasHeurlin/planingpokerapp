@@ -69,7 +69,7 @@ const ROOMS = [
       //  { user: user, score: score },
       ],
     },
-    finishedTopics: [
+    previousTopics: [
       { title: 'skapa admin-vy', score: 5 },
       { title: 'random topic', score: 3 },
     ],
@@ -239,7 +239,7 @@ io.on('connection', (socket) => {
   socket.on('nextTopic', (roomIndex) => {
     const room = ROOMS[roomIndex];
 
-    room.finishedTopics.push(room.currentTopic);
+    room.previousTopics.push(room.currentTopic);
 
     room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
 
@@ -250,13 +250,13 @@ io.on('connection', (socket) => {
 
   socket.on('endGame', (roomIndex) => {
     const room = ROOMS[roomIndex];
-    const finishedTopics = room.finishedTopics;
+    const previousTopics = room.previousTopics;
     const users = room.users;
 
     ROOMS.splice(roomIndex, 1);
 
     users.forEach((user) =>
-      io.to(user.socketId).emit('endGame', finishedTopics)
+      io.to(user.socketId).emit('endGame', previousTopics)
     );
   });
 });

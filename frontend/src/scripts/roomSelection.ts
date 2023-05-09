@@ -8,7 +8,8 @@ export interface Room {
   users: User[];
   usersWhoLeft: string[];
   upcomingTopics: Topic[];
-  currentTopic: Topic[];
+  currentTopic: Topic;
+  previousTopics: Topic[];
 }
 export interface User {
   name: string;
@@ -16,8 +17,9 @@ export interface User {
 }
 export interface Topic {
   title: string;
-  score?: number;
+  votes?: number;
 }
+
 export function getAllRooms() {
   fetch("http://localhost:3000/rooms")
     .then((res) => res.json())
