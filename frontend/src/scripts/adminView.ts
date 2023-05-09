@@ -58,9 +58,9 @@ function createUpcomingTopicsAdmin(/*room*/){
     const moveTopicUpBtn = document.createElement('button') as HTMLButtonElement; 
     const moveTopicDownBtn = document.createElement('button') as HTMLButtonElement;
     
-    socket.on('changeTopicOrder', (room) => {
-        createUpcomingTopicsAdmin(/*room*/);
-    })
+    // socket.on('changeTopicOrder', (/*room*/) => {
+    //     createUpcomingTopicsAdmin(/*room*/);
+    // })
 
     upcomingTopicsContainer.classList.add('admin-upcoming-topics')
     upcomingTopicsTitle.innerText = 'Kommande topics';
