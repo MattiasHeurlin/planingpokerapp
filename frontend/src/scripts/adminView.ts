@@ -1,19 +1,19 @@
-//import { Room } from "./roomSelection";
-//import { renderUserCards } from "./userView";
+import { Room } from "./roomSelection";
+import { renderUserCards } from "./userView";
 import { socket } from "./main";
 
 const adminContainer = document.querySelector('#adminView') as HTMLDivElement;
 adminContainer.classList.add('grid')
 
-export function printAdminView (/*room:Room*/){
+export function printAdminView (room:Room){
     createAddNewTopic();
     createUpcomingTopicsAdmin();
     createStartVoting();
     createNextTopicBtn();
-    createCurrentTopic();
+    createCurrentTopic(room);
     createPreviousTopics();
     createEndBtn();
-    //renderUserCards(room.users);
+    renderUserCards(room.users);
 }
 
 // export default function getRoom(/*e*/) {
@@ -105,7 +105,9 @@ function createNextTopicBtn(){
     nextTopicContainer.appendChild(nextTopicBtn);
 }
 
-function createCurrentTopic(){
+function createCurrentTopic(room: Room){
+
+    console.log(room)
     const currentTopicContainer = document.createElement('div') as HTMLDivElement;
     const currentTopicTitleContainer = document.createElement('div') as HTMLDivElement;
     const currentTopicTitle = document.createElement('p') as HTMLParagraphElement;
