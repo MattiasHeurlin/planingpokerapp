@@ -1,7 +1,7 @@
 import '../style.css';
 import { io } from "socket.io-client";
 import { getAllRooms } from './roomSelection';
-import { adminLogin } from './adminLogin';
+import { superadminLogin } from './superadminLogin';
 
 const app = document.querySelector('#app');
 
@@ -14,7 +14,7 @@ socket.on("test", (arg) => {
 })
 function init(): void {
   getAllRooms();
-  adminLogin();
+  superadminLogin();
 }
 
 socket.on("userAlreadyInRoom", (data) => {
