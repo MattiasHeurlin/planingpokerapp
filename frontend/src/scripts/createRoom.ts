@@ -2,8 +2,13 @@ import { socket } from './main';
 import { User } from './roomSelection';
 import { Topic } from './roomSelection';
 
+interface Admin {
+  name: string;
+  socketId: string;
+}
+
 class Room {
-  public admin: string;
+  public admin: Admin;
   public users: User[] = [];
   public usersWhoLeft: User[] = [];
   public upcomingTopics: Topic[] = [];
@@ -11,7 +16,7 @@ class Room {
   public finishedTopics: Topic[] = [];
 
   constructor(admin: string) {
-    this.admin = admin;
+    this.admin = { name: admin, socketId: socket.id };
   }
 }
 
