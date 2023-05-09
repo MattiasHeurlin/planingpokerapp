@@ -3,6 +3,7 @@ import { io } from 'socket.io-client';
 import { getAllRooms } from './roomSelection';
 import { renderUserView } from './userView';
 import { Room } from './roomSelection';
+import { printAdminView } from './adminView';
 const app = document.querySelector('#app');
 
 app!.innerHTML = `
@@ -12,8 +13,10 @@ app!.innerHTML = `
     <main class="main-content"><h2>Öppna Rum<h2></main>
     <section class="previous-topics"><h2>Previous topics<h2></section>
     <footer class="footer"></footer>
-  </div>
-`;
+  </div>`;
+
+printAdminView();
+
 
 export const socket = io('http://localhost:3000');
 

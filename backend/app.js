@@ -79,8 +79,10 @@ const FIBONACCI = [0, 1, 3, 5, 8];
 // const ROOMS = [];
 
 app.get('/rooms', (req, res) => {
-  res.json(ROOMS);
-});
+
+  res.json(ROOMS)
+
+})
 
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
@@ -216,7 +218,7 @@ io.on('connection', (socket) => {
       roomAndTopicAndDirection.topic
     );
 
-    if (direction == 'down') {
+    if (direction == 'ner') {
       // handle swap down
       room.upcomingTopics[indexOfTopic] = room.upcomingTopics[indexOfTopic + 1];
       room.upcomingTopics[indexOfTopic + 1] = roomAndTopicAndDirection.topic;
