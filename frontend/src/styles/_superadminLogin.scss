@@ -1,4 +1,4 @@
-.adminLoginContainer {
+.superadminLoginContainer {
     margin: auto;
     margin-top: 70px;
     font-family: sans-serif;
@@ -9,7 +9,7 @@
     gap: 30px;
 }
 
-.adminBtn, .adminLoginBtn {
+.superadminBtn, .superadminLoginBtn {
     border: none;
     border-radius: 5px;
     padding: 10px 30px 10px 30px;
@@ -17,18 +17,18 @@
     background-color: rgb(34, 43, 73);
 }
 
-.adminBtn {
+.superadminBtn {
     position: fixed;
     right: 20px;
     top: 20px
 }
 
-.usernameLabel, .passwordLabel {
+.superadminUsernameLabel, .superadminPasswordLabel {
     display: flex;
     flex-direction: column;
 }
 
-.adminLoginUsername, .adminLoginPassword {
+.superadminLoginUsername, .superadminLoginPassword {
     border: none;
     border-radius: 5px;
     padding: 15px 40px 15px 40px;
