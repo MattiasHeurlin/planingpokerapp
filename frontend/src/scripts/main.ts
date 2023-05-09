@@ -42,13 +42,21 @@ function addSockets() {
   });
 
   socket.on('startGame', (room) => {
-    // lägg till rendera nästa fråga funktion här (och en check om man är admin eller user)
+    // lägg till rendera nästa fråga funktion här (user-vy)
     console.log(room);
-    console.log('fungerar');
+  });
+
+  socket.on('startGameAdmin', (room) => {
+    // lägg till rendera nästa fråga funktion här (admin-vy)
+    console.log(room);
   });
 
   socket.on('noTopics', () => {
     console.log('You need to add atleast 1 topic to start the game.');
+  });
+
+  socket.on('missingVotes', () => {
+    console.log("Everyone hasn't finished voting yet.");
   });
 }
 
