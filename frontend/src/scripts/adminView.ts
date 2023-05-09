@@ -11,7 +11,7 @@ export function printAdminView (room: Room){
     createUpcomingTopicsAdmin();
     createStartVoting();
     createNextTopicBtn();
-    createCurrentTopic();
+    createCurrentTopic(room);
     createPreviousTopics(room);
     createEndBtn();
     //renderUserCards(room.users);
@@ -102,7 +102,9 @@ function createNextTopicBtn(){
     nextTopicContainer.appendChild(nextTopicBtn);
 }
 
-function createCurrentTopic(){
+function createCurrentTopic(room: Room){
+
+    console.log(room.currentTopic)
     const currentTopicContainer = document.createElement('div') as HTMLDivElement;
     const currentTopicTitleContainer = document.createElement('div') as HTMLDivElement;
     const currentTopicTitle = document.createElement('p') as HTMLParagraphElement;
@@ -112,9 +114,9 @@ function createCurrentTopic(){
     const averageValue = document.createElement('p') as HTMLParagraphElement;
 
     currentTopicContainer.classList.add('admin-main-content')
-    currentTopicTitle.innerText = 'Test topic just nu';
+    currentTopicTitle.innerText = `${room.currentTopic[0].title}`;
     averageValueTitle.innerText = 'Medelvärde';
-    averageValue.innerText = 'Test 123';
+    averageValue.innerText = `${room.currentTopic[0].score}`;
 
     adminContainer.appendChild(currentTopicContainer);
     currentTopicContainer.appendChild(currentTopicTitleContainer);
