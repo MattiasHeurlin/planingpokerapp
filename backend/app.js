@@ -9,7 +9,7 @@ require('dotenv').config();
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
-const adminRouter = require('./routes/admin');
+const superadminRouter = require('./routes/superadmin');
 const { stringify } = require('querystring');
 
 const app = express();
@@ -40,7 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-app.use('/admin', adminRouter);
+app.use('/superadmin', superadminRouter);
 
 // const ROOMS = [
 //   {
