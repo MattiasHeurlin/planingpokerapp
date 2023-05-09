@@ -1,19 +1,20 @@
 import { Room } from "./roomSelection";
-import { renderUserCards } from "./userView";
+//import { renderUserCards } from "./userView";
 import { socket } from "./main";
 
 const adminContainer = document.querySelector('#adminView') as HTMLDivElement;
 adminContainer.classList.add('grid')
 
-export function printAdminView (room:Room){
+export function printAdminView (room: Room){
+    console.log(room)
     createAddNewTopic();
     createUpcomingTopicsAdmin();
     createStartVoting();
     createNextTopicBtn();
-    createCurrentTopic(room);
-    createPreviousTopics();
+    createCurrentTopic();
+    createPreviousTopics(room);
     createEndBtn();
-    renderUserCards(room.users);
+    //renderUserCards(room.users);
 }
 
 // export default function getRoom(/*e*/) {
@@ -57,10 +58,6 @@ function createUpcomingTopicsAdmin(/*room*/){
     const upcomingTopic = document.createElement('p') as HTMLParagraphElement;
     const moveTopicUpBtn = document.createElement('button') as HTMLButtonElement; 
     const moveTopicDownBtn = document.createElement('button') as HTMLButtonElement;
-    
-    // socket.on('changeTopicOrder', (/*room*/) => {
-    //     createUpcomingTopicsAdmin(/*room*/);
-    // })
 
     upcomingTopicsContainer.classList.add('admin-upcoming-topics')
     upcomingTopicsTitle.innerText = 'Kommande topics';
@@ -105,9 +102,7 @@ function createNextTopicBtn(){
     nextTopicContainer.appendChild(nextTopicBtn);
 }
 
-function createCurrentTopic(room: Room){
-
-    console.log(room)
+function createCurrentTopic(){
     const currentTopicContainer = document.createElement('div') as HTMLDivElement;
     const currentTopicTitleContainer = document.createElement('div') as HTMLDivElement;
     const currentTopicTitle = document.createElement('p') as HTMLParagraphElement;
@@ -130,20 +125,24 @@ function createCurrentTopic(room: Room){
     averageValueContainer.appendChild(averageValue);
 }
 
-function createPreviousTopics(){
+function createPreviousTopics(room: Room){
+    console.log(room.finishedTopics)
     const previousTopicContainer = document.createElement('div') as HTMLDivElement;
     const previousTopicsTitle = document.createElement('h3') as HTMLHeadingElement;
-    const topicContainer = document.createElement('div') as HTMLDivElement;
-    const previousTopic = document.createElement('p') as HTMLParagraphElement;
-
+    
     previousTopicContainer.classList.add('admin-previous-topics')
     previousTopicsTitle.innerText = 'Tidigare topics';
-    previousTopic.innerText =  'Test';
+    previousTopicContainer.appendChild(previousTopicsTitle);
+
+    for (let i = 0; i < room.finishedTopics.length; i++) {
+        const topicContainer = document.createElement('div') as HTMLDivElement;
+        const previousTopic = document.createElement('p') as HTMLParagraphElement;
+        previousTopic.innerText = room.finishedTopics[i].title;
+        previousTopicContainer.appendChild(topicContainer);
+        topicContainer.appendChild(previousTopic); 
+    }
 
     adminContainer.appendChild(previousTopicContainer);
-    previousTopicContainer.appendChild(previousTopicsTitle);
-    previousTopicContainer.appendChild(topicContainer);
-    topicContainer.appendChild(previousTopic);
 }
 
 function createEndBtn(){
