@@ -113,6 +113,7 @@ io.on('connection', (socket) => {
     ROOMS.push(room);
 
     io.emit('monitorRooms');
+    io.to(socket.id).emit('createRoom', room);
   });
 
   socket.on('joinRoom', (userAndRoomIndex) => {
