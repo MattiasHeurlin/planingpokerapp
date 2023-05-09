@@ -241,11 +241,15 @@ io.on('connection', (socket) => {
     room.upcomingTopics.splice(0, 1);
 
     room.users.forEach((user) => io.to(user.socketId).emit('startGame', room));
-    io.to(socket.id).emit('startGame', room);
+    io.to(socket.id).emit('startGameAdmin', room);
   });
 
-  socket.on('nextTopic', (roomIndex) => {
-    const room = ROOMS[roomIndex];
+  socket.on('nextTopic', (socketId) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socketId);
+
+    if (room.currentTopic.votes.length < room.users.length) {
+      return io.to(socket.id).emit('missingVotes');
+    }
 
     room.finishedTopics.push(room.currentTopic);
 
@@ -254,6 +258,7 @@ io.on('connection', (socket) => {
     room.upcomingTopics.splice(0, 1);
 
     room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
+    io.to(socket.id).emit('nextTopicAdmin');
   });
 
   socket.on('endGame', (roomIndex) => {
