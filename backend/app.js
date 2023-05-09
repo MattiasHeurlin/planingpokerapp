@@ -79,10 +79,8 @@ const FIBONACCI = [0, 1, 3, 5, 8];
 // const ROOMS = [];
 
 app.get('/rooms', (req, res) => {
-
-  res.json(ROOMS)
-
-})
+  res.json(ROOMS);
+});
 
 io.on('connection', (socket) => {
   socket.on('disconnect', () => {
@@ -251,16 +249,18 @@ io.on('connection', (socket) => {
     room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
   });
 
-  socket.on('endGame', (roomIndex) => {
-    const room = ROOMS[roomIndex];
-    const finishedTopics = room.finishedTopics;
+  socket.on('endSession', (socketId) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socketId);
+    const roomIndex = ROOMS.indexOf(room);
     const users = room.users;
+    const admin = room.admin;
+
+    // spara rummet i databasen här
 
     ROOMS.splice(roomIndex, 1);
 
-    users.forEach((user) =>
-      io.to(user.socketId).emit('endGame', finishedTopics)
-    );
+    users.forEach((user) => io.to(user.socketId).emit('endSession'));
+    io.to(admin.socketId).emit('endSession');
   });
 });
 
