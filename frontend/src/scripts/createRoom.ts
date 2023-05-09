@@ -27,10 +27,10 @@ export function createRoom(roomAdmin: string) {
 
   const newRoom = new Room(roomAdmin);
 
-  socket.on('createRoom', (room) => {
+  socket.on('createRoomAdmin', (room) => {
     // printAdminView(room); <--- kommentera in efter merge
     console.log(room);
-    socket.off('createRoom');
+    socket.off('createRoomAdmin');
   });
 
   socket.emit('createRoom', newRoom);
