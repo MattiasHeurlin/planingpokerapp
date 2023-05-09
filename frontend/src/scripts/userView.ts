@@ -72,7 +72,7 @@ export function renderPreviousTopics(topics: Topic[]) {
 
   topics.forEach((topic: Topic) => {
     const li = document.createElement("li");
-    li.innerHTML = topic.title + "Poäng: " + topic.votes;
+    li.innerHTML = topic.title + " - Poäng: " + topic.score;
     ulContainer.appendChild(li);
   });
   container.append(previousTopicsHeader, ulContainer);
@@ -103,39 +103,39 @@ export function renderVotingCards() {
     switch (i) {
       case 0:
         votingCardValue.innerHTML = "?";
-        votingCardValue.addEventListener("click", () => {
+        votingCard.addEventListener("click", () => {
           castVote(0);
         });
         break;
       case 1:
         votingCardValue.innerHTML = "1";
-        votingCardValue.addEventListener("click", () => {
+        votingCard.addEventListener("click", () => {
           castVote(1);
         });
         break;
       case 2:
         votingCardValue.innerHTML = "3";
-        votingCardValue.addEventListener("click", () => {
+        votingCard.addEventListener("click", () => {
           castVote(3);
         });
 
         break;
       case 3:
         votingCardValue.innerHTML = "5";
-        votingCardValue.addEventListener("click", () => {
+        votingCard.addEventListener("click", () => {
           castVote(5);
         });
 
         break;
       case 4:
         votingCardValue.innerHTML = "8";
-        votingCardValue.addEventListener("click", () => {
+        votingCard.addEventListener("click", () => {
           castVote(8);
         });
         break;
       case 5:
         votingCardValue.innerHTML = "13";
-        votingCardValue.addEventListener("click", () => {
+        votingCard.addEventListener("click", () => {
           castVote(13);
         });
         break;
