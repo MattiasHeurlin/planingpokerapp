@@ -1,6 +1,7 @@
 import { socket } from './main';
 import { User } from './roomSelection';
 import { Topic } from './roomSelection';
+import { printAdminView } from './adminView';
 
 class Room {
   public admin: string;
@@ -23,7 +24,7 @@ export function createRoom(roomAdmin: string) {
   const newRoom = new Room(roomAdmin);
 
   socket.on('createRoom', (room) => {
-    // printAdminView(room); <--- kommentera in efter merge
+    printAdminView(room);
     console.log(room);
     socket.off('createRoom');
   });
