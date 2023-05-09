@@ -1,7 +1,7 @@
 import '../style.css';
 import { io } from "socket.io-client";
 import { getAllRooms } from './roomSelection';
-import { renderRunningRoom, renderUserView } from './userView';
+import { addHiddenVote, renderRunningRoom, renderUserView } from './userView';
 import { Room } from './roomSelection';
 const app = document.querySelector('#app');
 
@@ -35,8 +35,8 @@ socket.on("userAlreadyInRoom", (data) => {
 });
 socket.on("joinRoom", (room: Room) => {
   console.log(room)
-  renderUserView(room);
-  
+  // renderUserView(room);
+  renderRunningRoom(room);
   
 })
 
@@ -44,6 +44,11 @@ socket.on("joinRoom", (room: Room) => {
 socket.on("monitorRoom", (room: Room) => {
   console.log(room)
   renderRunningRoom(room);
+})
+
+socket.on("vote", (room: Room) => {
+  console.log(room)
+  addHiddenVote(room);
 })
 
 init();

@@ -47,11 +47,11 @@ const ROOMS = [
     users: [
       {
         name: 'Doe',
-        id: 1,
+        socketId: 1,
       },
       {
         name: 'Foe',
-        id: 2,
+        socketId: 2,
       },
     ],
     usersWhoLeft: ['Donny'],
@@ -64,9 +64,10 @@ const ROOMS = [
       },
     ],
     currentTopic: {
-      title: "Nuvarande ämne",
+      title: "Bygga Youtube klon",
       votes: [
-      //  { user: user, score: score },
+          { user: 'gregory', score: 3 },
+          { user: 'Barry', score: 3 },
       ],
     },
     previousTopics: [
@@ -74,7 +75,40 @@ const ROOMS = [
       { title: 'random topic', score: 3 },
     ],
   },
-];
+  {
+    admin: 'Troy',
+    users: [
+      {
+        name: 'Lory',
+        socketId: 1,
+      },
+      {
+        name: 'Barry',
+        socketId: 2,
+      },
+    ],
+    usersWhoLeft: ['Donny'],
+    upcomingTopics: [
+      {
+        title: 'Skapa frontend',
+      },
+      {
+        title: 'Skapa backend',
+      },
+    ],
+    currentTopic: {
+      title: "Bygga Spotify klon",
+      votes: [
+          { user: 'gregory', score: 3 },
+      ],
+    },
+    previousTopics: [
+      { title: 'skapa admin-vy', score: 5 },
+      { title: 'random topic', score: 3 },
+    ],
+  },
+]
+;
 
 
 const FIBONACCI = [0, 1, 3, 5, 8];
@@ -90,7 +124,7 @@ app.get('/rooms', (req, res) => {
 
 
 io.on('connection', (socket) => {
-  
+
   socket.on('disconnect', () => {
     const roomWithUser = ROOMS.find((room) =>
       room.users.find((user) => user.socketId === socket.id)
@@ -112,7 +146,7 @@ io.on('connection', (socket) => {
       io.to(user.id).emit('userDisconnect', roomWithUser)
     );
   });
-  
+
   socket.on('monitorRooms', () => {
     io.emit('monitorRooms', ROOMS);
   });
@@ -135,7 +169,7 @@ io.on('connection', (socket) => {
       }
     });
     if (userAlreadyInRoom) {
-        io.to(socket.id).emit('userAlreadyInRoom', room);
+      io.to(socket.id).emit('userAlreadyInRoom', room);
       return;
     }
     const user = {
@@ -175,15 +209,13 @@ io.on('connection', (socket) => {
     usersInRoom.forEach((user) => io.to(user.socketId).emit('roomDeleted'));
   });
 
-  socket.on('vote', (roomIndexAndUserWhoVotedAndScore) => {
-    const room = ROOMS[roomIndex];
-    const usersInRoom = room.users.map((user) => user);
-
+  socket.on('vote', (voteValue) => {
+    const room = ROOMS.find((room) => room.users.find((user) => user.socketId === socket.id));
+    const user = room.users.find((user) => user.socketId === socket.id);
     const userAndScore = {
-      user: roomIndexAndUserWhoVotedAndScore.user,
-      score: roomIndexAndUserWhoVotedAndScore.score,
+      user: user,
+      score: voteValue,
     };
-
     room.currentTopic.votes.push(userAndScore);
 
     if (room.users.length === room.currentTopic.votes.length) {
@@ -201,12 +233,12 @@ io.on('connection', (socket) => {
 
       room.currentTopic.score = fibonacciValue;
 
-      return usersInRoom.forEach((user) =>
+      return room.users.forEach((user) =>
         io.to(user.socketId).emit('allVoted', lastUserScoreAndFibonacci)
       );
     }
-
-    usersInRoom.forEach((user) => io.to(user.socketId).emit('vote', user));
+    console.log(userAndScore)
+    room.users.forEach((user) => io.to(user.socketId).emit('vote', room));
   });
 
   socket.on('changeTopicOrder', (roomAndTopicAndDirection) => {

@@ -1,4 +1,7 @@
 import { User, Topic, Room } from "./roomSelection";
+import { socket } from "./main";
+
+
 
 export function renderUserView(room: Room) {
   console.log(room);
@@ -46,6 +49,7 @@ export function renderRunningRoom(room: Room) {
 
 export function renderComingTopics(topics: Topic[]) {
   const upcomingTopics = document.querySelector(".upcoming-topics");
+  upcomingTopics!.innerHTML = "";
   const container = document.createElement("div");
   const upcomingTopicsHeader = document.createElement("h2");
   upcomingTopicsHeader.innerHTML = "Kommande ämnen";
@@ -62,6 +66,7 @@ export function renderComingTopics(topics: Topic[]) {
 
 export function renderPreviousTopics(topics: Topic[]) {
   const previousTopics = document.querySelector(".previous-topics");
+  previousTopics!.innerHTML = "";
   const container = document.createElement("div");
   const previousTopicsHeader = document.createElement("h2");
   previousTopicsHeader.innerHTML = "Tidigare ämnen";
@@ -78,11 +83,12 @@ export function renderPreviousTopics(topics: Topic[]) {
 
 export function renderMainTopic(topic: Topic) {
   const main = document.querySelector(".main-content");
+  main!.innerHTML = "";
   const mainTopic = document.createElement("div");
   mainTopic.classList.add("main-topic");
-  const mainTopicHeader = document.createElement("h2");
+  const mainTopicHeader = document.createElement("h3");
   mainTopicHeader.innerHTML = "Nuvarande ämne";
-  const mainTopicTitle = document.createElement("h3");
+  const mainTopicTitle = document.createElement("h2");
   mainTopicTitle.innerHTML = topic.title;
   mainTopic.append(mainTopicHeader, mainTopicTitle);
   main?.appendChild(mainTopic);
@@ -99,21 +105,41 @@ export function renderVotingCards() {
     switch (i) {
       case 0:
       votingCardValue.innerHTML = "?";
+      votingCardValue.addEventListener("click", () => {
+        castVote(0);
+      });
       break;
       case 1:
       votingCardValue.innerHTML = "1";
+      votingCardValue.addEventListener("click", () => {
+        castVote(1);
+      });
       break;
       case 2:
       votingCardValue.innerHTML = "3";
+      votingCardValue.addEventListener("click", () => {
+        castVote(3);
+      });
+
       break;
       case 3:
       votingCardValue.innerHTML = "5";
+      votingCardValue.addEventListener("click", () => {
+        castVote(5);
+      });
+
       break;
       case 4:
       votingCardValue.innerHTML = "8";
+      votingCardValue.addEventListener("click", () => {
+        castVote(8);
+      });
       break;
       case 5:
       votingCardValue.innerHTML = "13";
+      votingCardValue.addEventListener("click", () => {
+        castVote(13);
+      });
       break;
     }
     votingCard.appendChild(votingCardValue);
@@ -121,3 +147,23 @@ export function renderVotingCards() {
   }
   footer?.appendChild(cardContainer);
 }
+
+
+function castVote(value: number) {
+  socket.emit("vote", value);
+}
+
+export function addHiddenVote(room : Room) {
+  const main = document.querySelector(".main-content");
+  const voteCardContainer = document.createElement("div");
+  voteCardContainer.classList.add("vote-card-container");
+  room.users.forEach(() => {
+    const voteCard = document.createElement("div");
+    voteCard.classList.add("vote-card");
+    console.log("voteCard", voteCard)
+    // Card background?
+    voteCardContainer.appendChild(voteCard);
+  });
+  main!.append(voteCardContainer)
+}
+
