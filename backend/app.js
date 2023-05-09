@@ -69,6 +69,7 @@ const ROOMS = [
           { user: 'gregory', score: 3 },
           { user: 'Barry', score: 3 },
       ],
+      score: 0 // Avg score
     },
     previousTopics: [
       { title: 'skapa admin-vy', score: 5 },
@@ -232,9 +233,9 @@ io.on('connection', (socket) => {
       };
 
       room.currentTopic.score = fibonacciValue;
-
+      console.log('all voted')
       return room.users.forEach((user) =>
-        io.to(user.socketId).emit('allVoted', lastUserScoreAndFibonacci)
+        io.to(user.socketId).emit('allVoted', room)
       );
     }
     console.log(userAndScore)

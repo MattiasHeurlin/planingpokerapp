@@ -8,7 +8,7 @@ export interface Room {
   users: User[];
   usersWhoLeft: string[];
   upcomingTopics: Topic[];
-  currentTopic: Topic;
+  currentTopic: CurrentTopic;
   previousTopics: Topic[];
 }
 export interface User {
@@ -17,7 +17,18 @@ export interface User {
 }
 export interface Topic {
   title: string;
-  votes?: number;
+  votes?: Vote[];
+  score?: number;
+}
+
+interface CurrentTopic {
+  title: string;
+  votes: Vote[];
+  score: number;
+}
+interface Vote {
+  user: User;
+  score: number;
 }
 
 export function getAllRooms() {

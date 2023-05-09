@@ -1,8 +1,6 @@
 import { User, Topic, Room } from "./roomSelection";
 import { socket } from "./main";
 
-
-
 export function renderUserView(room: Room) {
   console.log(room);
   const main = document.querySelector(".main-content");
@@ -104,43 +102,43 @@ export function renderVotingCards() {
     const votingCardValue = document.createElement("h3");
     switch (i) {
       case 0:
-      votingCardValue.innerHTML = "?";
-      votingCardValue.addEventListener("click", () => {
-        castVote(0);
-      });
-      break;
+        votingCardValue.innerHTML = "?";
+        votingCardValue.addEventListener("click", () => {
+          castVote(0);
+        });
+        break;
       case 1:
-      votingCardValue.innerHTML = "1";
-      votingCardValue.addEventListener("click", () => {
-        castVote(1);
-      });
-      break;
+        votingCardValue.innerHTML = "1";
+        votingCardValue.addEventListener("click", () => {
+          castVote(1);
+        });
+        break;
       case 2:
-      votingCardValue.innerHTML = "3";
-      votingCardValue.addEventListener("click", () => {
-        castVote(3);
-      });
+        votingCardValue.innerHTML = "3";
+        votingCardValue.addEventListener("click", () => {
+          castVote(3);
+        });
 
-      break;
+        break;
       case 3:
-      votingCardValue.innerHTML = "5";
-      votingCardValue.addEventListener("click", () => {
-        castVote(5);
-      });
+        votingCardValue.innerHTML = "5";
+        votingCardValue.addEventListener("click", () => {
+          castVote(5);
+        });
 
-      break;
+        break;
       case 4:
-      votingCardValue.innerHTML = "8";
-      votingCardValue.addEventListener("click", () => {
-        castVote(8);
-      });
-      break;
+        votingCardValue.innerHTML = "8";
+        votingCardValue.addEventListener("click", () => {
+          castVote(8);
+        });
+        break;
       case 5:
-      votingCardValue.innerHTML = "13";
-      votingCardValue.addEventListener("click", () => {
-        castVote(13);
-      });
-      break;
+        votingCardValue.innerHTML = "13";
+        votingCardValue.addEventListener("click", () => {
+          castVote(13);
+        });
+        break;
     }
     votingCard.appendChild(votingCardValue);
     cardContainer?.appendChild(votingCard);
@@ -148,22 +146,36 @@ export function renderVotingCards() {
   footer?.appendChild(cardContainer);
 }
 
-
 function castVote(value: number) {
   socket.emit("vote", value);
 }
 
-export function addHiddenVote(room : Room) {
+export function addVote(room: Room, revealScore: boolean) {
   const main = document.querySelector(".main-content");
+  const findVoteCardContainer = document.querySelector(".vote-card-container");
+  if (findVoteCardContainer) {
+    main!.removeChild(findVoteCardContainer);
+  }
   const voteCardContainer = document.createElement("div");
   voteCardContainer.classList.add("vote-card-container");
-  room.users.forEach(() => {
+  room.currentTopic.votes!.forEach((vote) => {
     const voteCard = document.createElement("div");
     voteCard.classList.add("vote-card");
-    console.log("voteCard", voteCard)
+    if (revealScore) {
+      const voteCardTitle = document.createElement("h3");
+      voteCardTitle.innerHTML = vote.user.name;
+      const voteCardValue = document.createElement("h2");
+      voteCardValue.innerHTML = vote.score.toString();
+      voteCard.append(voteCardTitle, voteCardValue);
+    }
+    console.log("voteCard", voteCard);
     // Card background?
     voteCardContainer.appendChild(voteCard);
   });
-  main!.append(voteCardContainer)
+  if (revealScore) {
+    const avgScore = document.createElement("h2");
+    avgScore.innerHTML = "SnittPoäng: " + room.currentTopic.score;
+    main!.append(avgScore);
+  }
+  main!.append(voteCardContainer);
 }
-
