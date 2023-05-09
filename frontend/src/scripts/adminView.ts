@@ -108,20 +108,20 @@ function createNextTopicBtn(){
 function createCurrentTopic(){
     const currentTopicContainer = document.createElement('div') as HTMLDivElement;
     const currentTopicTitleContainer = document.createElement('div') as HTMLDivElement;
-    const curretnTopicTitle = document.createElement('p') as HTMLParagraphElement;
+    const currentTopicTitle = document.createElement('p') as HTMLParagraphElement;
     const userAndAverageValueContainer = document.createElement('div') as HTMLDivElement;
     const averageValueContainer = document.createElement('div') as HTMLDivElement;
     const averageValueTitle = document.createElement('p') as HTMLParagraphElement;
     const averageValue = document.createElement('p') as HTMLParagraphElement;
 
     currentTopicContainer.classList.add('admin-main-content')
-    curretnTopicTitle.innerText = 'Test topic just nu';
+    currentTopicTitle.innerText = 'Test topic just nu';
     averageValueTitle.innerText = 'Medelvärde';
     averageValue.innerText = 'Test 123';
 
     adminContainer.appendChild(currentTopicContainer);
     currentTopicContainer.appendChild(currentTopicTitleContainer);
-    currentTopicTitleContainer.appendChild(curretnTopicTitle);
+    currentTopicTitleContainer.appendChild(currentTopicTitle);
     currentTopicContainer.appendChild(userAndAverageValueContainer);
     userAndAverageValueContainer.appendChild(averageValueContainer);
     averageValueContainer.appendChild(averageValueTitle);
