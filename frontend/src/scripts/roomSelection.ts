@@ -1,5 +1,6 @@
 import { createRoomElements } from './createRoom';
 import { socket } from './main';
+import { addUserSockets } from './sockets';
 
 export interface Room {
   admin: Admin;
@@ -67,6 +68,8 @@ export function renderRooms(rooms: Room[]) {
     const button = document.createElement('button');
     button.innerText = 'Gå med';
     button.addEventListener('click', () => {
+      addUserSockets();
+
       socket.emit('joinRoom', { name: input.value, roomIndex: i });
       console.log(input.value, i);
     });
