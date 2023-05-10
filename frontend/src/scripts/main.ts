@@ -9,7 +9,7 @@ import { Room } from './roomSelection';
 import { printAdminView } from './adminView';
 import { renderEndSessionPage } from './endSession';
 
-const app = document.querySelector('#app');
+export const app = document.querySelector('#app');
 
 app!.innerHTML = `
   <div class="grid-container">

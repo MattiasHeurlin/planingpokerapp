@@ -6,7 +6,7 @@ class Room {
   public admin: Admin;
   public users: User[] = [];
   public usersWhoLeft: User[] = [];
-  public upcomingTopics: Topic[] = [];
+  public upcomingTopics: Topic[] = [{title: "Nummer 1"}, {title: "Nummer 2"}, {title: "Nummer 3"}];
   public currentTopic: Topic = {};
   public previousTopics: Topic[] = [];
 

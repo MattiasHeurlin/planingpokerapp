@@ -145,7 +145,7 @@ io.on('connection', (socket) => {
   socket.on('createRoom', (room) => {
     ROOMS.push(room);
 
-    io.emit('monitorRooms');
+    // io.emit('monitorRooms');
     io.to(socket.id).emit('createRoomAdmin', room);
   });
 
@@ -241,23 +241,24 @@ io.on('connection', (socket) => {
     room.users.forEach((user) => io.to(user.socketId).emit('vote', room));
   });
 
-  socket.on('changeTopicOrder', (roomAndTopicAndDirection) => {
-    const room = ROOMS[roomAndTopicAndDirection.roomIndex];
-    const direction = roomAndTopicAndDirection.direction;
+  socket.on('changeTopicOrder', (topicIndexAndDirection) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
+    const direction = topicIndexAndDirection.direction;
 
-    const indexOfTopic = room.upcomingTopics.indexOf(
-      roomAndTopicAndDirection.topic
-    );
+    const topicIndex = topicIndexAndDirection.topicIndex;
 
     if (direction == 'ner') {
       // handle swap down
-      room.upcomingTopics[indexOfTopic] = room.upcomingTopics[indexOfTopic + 1];
-      room.upcomingTopics[indexOfTopic + 1] = roomAndTopicAndDirection.topic;
+      room.upcomingTopics[topicIndex] = room.upcomingTopics[topicIndex + 1];
+      room.upcomingTopics[topicIndex + 1] = topicIndexAndDirection.topic;
     } else {
       // handle swap up
-      room.upcomingTopics[indexOfTopic] = room.upcomingTopics[indexOfTopic - 1];
-      room.upcomingTopics[indexOfTopic - 1] = roomAndTopicAndDirection.topic;
+      room.upcomingTopics[topicIndex] = room.upcomingTopics[topicIndex - 1];
+      room.upcomingTopics[topicIndex - 1] = topicIndexAndDirection.topic;
     }
+
+    room.users.forEach((user) => io.to(user.socketId).emit("changeTopicOrder", room));
+    io.to(room.admin.socketId).emit("changeTopicOrderAdmin", room);
   });
 
   socket.on('startGame', (socketId) => {
