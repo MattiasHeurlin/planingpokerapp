@@ -17,8 +17,6 @@ app!.innerHTML = `
     <footer class="footer"></footer>
   </div>`;
 
-printAdminView();
-
 
 export const socket = io('http://localhost:3000');
 
