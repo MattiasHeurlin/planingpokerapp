@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const superadminRouter = require('./routes/superadmin');
 const { stringify } = require('querystring');
 
 const app = express();
@@ -39,6 +40,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/superadmin', superadminRouter);
+
 
 const ROOMS = [
   {
@@ -74,6 +77,7 @@ const ROOMS = [
     ],
   },
 ];
+
 
 const FIBONACCI = [0, 1, 3, 5, 8];
 // const ROOMS = [];
