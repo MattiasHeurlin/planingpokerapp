@@ -145,7 +145,7 @@ io.on('connection', (socket) => {
   socket.on('createRoom', (room) => {
     ROOMS.push(room);
 
-    io.emit('monitorRooms');
+    // io.emit('monitorRooms');
     io.to(socket.id).emit('createRoomAdmin', room);
   });
 
@@ -241,23 +241,26 @@ io.on('connection', (socket) => {
     room.users.forEach((user) => io.to(user.socketId).emit('vote', room));
   });
 
-  socket.on('changeTopicOrder', (roomAndTopicAndDirection) => {
-    const room = ROOMS[roomAndTopicAndDirection.roomIndex];
-    const direction = roomAndTopicAndDirection.direction;
-
-    const indexOfTopic = room.upcomingTopics.indexOf(
-      roomAndTopicAndDirection.topic
-    );
+  socket.on('changeTopicOrder', (topicIndexAndDirection) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
+    const direction = topicIndexAndDirection.direction;
+    const topicIndex = topicIndexAndDirection.topicIndex;
+    const topicToChange = room.upcomingTopics[topicIndex];
 
     if (direction == 'ner') {
       // handle swap down
-      room.upcomingTopics[indexOfTopic] = room.upcomingTopics[indexOfTopic + 1];
-      room.upcomingTopics[indexOfTopic + 1] = roomAndTopicAndDirection.topic;
+      room.upcomingTopics[topicIndex] = room.upcomingTopics[topicIndex + 1];
+      room.upcomingTopics[topicIndex + 1] = topicToChange;
     } else {
       // handle swap up
-      room.upcomingTopics[indexOfTopic] = room.upcomingTopics[indexOfTopic - 1];
-      room.upcomingTopics[indexOfTopic - 1] = roomAndTopicAndDirection.topic;
+      room.upcomingTopics[topicIndex] = room.upcomingTopics[topicIndex - 1];
+      room.upcomingTopics[topicIndex - 1] = topicToChange;
     }
+
+    room.users.forEach((user) =>
+      io.to(user.socketId).emit('changeTopicOrder', room)
+    );
+    io.to(room.admin.socketId).emit('changeTopicOrderAdmin', room);
   });
 
   socket.on('startGame', (socketId) => {
@@ -292,6 +295,26 @@ io.on('connection', (socket) => {
 
     room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
     io.to(socket.id).emit('nextTopicAdmin');
+  });
+
+  socket.on('removeTopic', (topicIndex) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
+
+    room.upcomingTopics.splice(topicIndex, 1);
+
+    room.users.forEach((user) =>
+      io.to(user.socketId).emit('removeTopic', room)
+    );
+    io.to(socket.id).emit('removeTopicAdmin', room);
+  });
+
+  socket.on('addTopic', (topicTitle) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
+
+    room.upcomingTopics.push({ title: topicTitle });
+
+    room.users.forEach((user) => io.to(user.socketId).emit('addTopic', room));
+    io.to(socket.id).emit('addTopicAdmin', room);
   });
 
   socket.on('endSession', (socketId) => {
