@@ -104,7 +104,10 @@ export function createUpcomingTopicsAdmin(room: Room) {
     moveTopicDownBtn.innerText = 'Ner';
     moveTopicUpBtn.innerText = 'Upp';
 
-    if (i == 0) {
+    if (room.upcomingTopics.length == 1) {
+      moveTopicUpBtn.disabled = true;
+      moveTopicDownBtn.disabled = true;
+    } else if (i == 0) {
       moveTopicUpBtn.disabled = true;
     } else if (i >= room.upcomingTopics.length - 1) {
       moveTopicDownBtn.disabled = true;
