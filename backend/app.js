@@ -297,6 +297,14 @@ io.on('connection', (socket) => {
     io.to(socket.id).emit('nextTopicAdmin');
   });
 
+  socket.on('removeTopic', (topicIndex) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
+
+    room.upcomingTopics.splice(topicIndex, 1);
+
+    io.to(socket.id).emit('removeTopicAdmin', room);
+  });
+
   socket.on('endSession', (socketId) => {
     const room = ROOMS.find((room) => room.admin.socketId == socketId);
     const roomIndex = ROOMS.indexOf(room);
