@@ -1,18 +1,7 @@
 import '../style.css';
 import { io } from 'socket.io-client';
 import { getAllRooms } from './roomSelection';
-
-import {
-  addVote,
-  renderComingTopics,
-  renderRunningRoom,
-  renderUserView,
-} from './userView';
-
 import { superadminLogin } from './superadminLogin';
-import { Room } from './roomSelection';
-import { printAdminView } from './adminView';
-import { renderEndSessionPage } from './endSession';
 
 export const app = document.querySelector('#app');
 
