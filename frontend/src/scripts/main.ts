@@ -29,6 +29,10 @@ function init(): void {
 }
 
 function addSockets() {
+  socket.on('changeTopicOrderAdmin', (room) => {
+    printAdminView(room);
+  });
+
   socket.on('userAlreadyInRoom', (data) => {
     console.log(data);
     const error = document.createElement('p');
