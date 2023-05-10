@@ -1,9 +1,11 @@
 import '../style.css';
 import { io } from 'socket.io-client';
 import { getAllRooms } from './roomSelection';
+import { superadminLogin } from './superadminLogin';
 import { renderUserView } from './userView';
 import { Room } from './roomSelection';
 import { printAdminView } from './adminView';
+
 const app = document.querySelector('#app');
 
 app!.innerHTML = `
@@ -15,13 +17,13 @@ app!.innerHTML = `
     <footer class="footer"></footer>
   </div>`;
 
-printAdminView();
 
 export const socket = io('http://localhost:3000');
 
 function init(): void {
   addSockets();
   getAllRooms();
+  superadminLogin();
 }
 
 function addSockets() {

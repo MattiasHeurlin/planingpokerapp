@@ -1,6 +1,7 @@
 import { socket } from './main';
 import { User } from './roomSelection';
 import { Topic } from './roomSelection';
+import { printAdminView } from './adminView';
 
 interface Admin {
   name: string;
@@ -27,8 +28,10 @@ export function createRoom(roomAdmin: string) {
 
   const newRoom = new Room(roomAdmin);
 
+
   socket.on('createRoomAdmin', (room) => {
-    // printAdminView(room); <--- kommentera in efter merge
+    printAdminView(room);
+
     console.log(room);
     socket.off('createRoomAdmin');
   });
