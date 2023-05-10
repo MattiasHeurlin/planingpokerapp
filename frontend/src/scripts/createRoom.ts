@@ -1,12 +1,17 @@
 import { socket } from './main';
 import { User, Admin, Topic } from './roomSelection';
 import { printAdminView } from './adminView';
+import { addAdminSockets } from './sockets';
 
 class Room {
   public admin: Admin;
   public users: User[] = [];
   public usersWhoLeft: User[] = [];
-  public upcomingTopics: Topic[] = [{title: "Nummer 1"}, {title: "Nummer 2"}, {title: "Nummer 3"}];
+  public upcomingTopics: Topic[] = [
+    { title: 'Nummer 1' },
+    { title: 'Nummer 2' },
+    { title: 'Nummer 3' },
+  ];
   public currentTopic: Topic = {};
   public previousTopics: Topic[] = [];
 
@@ -19,6 +24,8 @@ export function createRoom(roomAdmin: string) {
   if (!roomAdmin) {
     return alert('Rummet måste ha en admin');
   }
+
+  addAdminSockets();
 
   const newRoom = new Room(roomAdmin);
 
