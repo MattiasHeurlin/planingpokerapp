@@ -69,10 +69,8 @@ function createUpcomingTopicsAdmin(room: Room){
         removeUpcomingTopicBtn.id = `${i}`;
         upcomingTopic.innerText =  room.upcomingTopics[i].title;
         moveTopicDownBtn.innerText = 'Ner';
-        moveTopicDownBtn.id = `${i}`;
         moveTopicUpBtn.innerText = 'Upp';
-        moveTopicUpBtn.id = `${i}`;
-
+       
         upcomingTopicsContainer.appendChild(topicContainer);
         topicContainer.appendChild(removeUpcomingTopicBtn);
         topicContainer.appendChild(upcomingTopic);
