@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const superadminRouter = require('./routes/superadmin');
 const { stringify } = require('querystring');
 
 const app = express();
@@ -39,6 +40,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/superadmin', superadminRouter);
+
 
 const ROOMS = [
   {
@@ -74,6 +77,7 @@ const ROOMS = [
     ],
   },
 ];
+
 
 const FIBONACCI = [0, 1, 3, 5, 8];
 // const ROOMS = [];
@@ -227,18 +231,29 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('startGame', (roomIndex) => {
-    const room = ROOMS[roomIndex];
+  socket.on('startGame', (socketId) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socketId);
+
+    console.log(room);
+
+    if (room.upcomingTopics.length < 1) {
+      return io.to(socket.id).emit('noTopics');
+    }
 
     room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
 
     room.upcomingTopics.splice(0, 1);
 
     room.users.forEach((user) => io.to(user.socketId).emit('startGame', room));
+    io.to(socket.id).emit('startGameAdmin', room);
   });
 
-  socket.on('nextTopic', (roomIndex) => {
-    const room = ROOMS[roomIndex];
+  socket.on('nextTopic', (socketId) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socketId);
+
+    if (room.currentTopic.votes.length < room.users.length) {
+      return io.to(socket.id).emit('missingVotes');
+    }
 
     room.finishedTopics.push(room.currentTopic);
 
@@ -247,6 +262,7 @@ io.on('connection', (socket) => {
     room.upcomingTopics.splice(0, 1);
 
     room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
+    io.to(socket.id).emit('nextTopicAdmin');
   });
 
   socket.on('endSession', (socketId) => {
