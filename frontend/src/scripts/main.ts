@@ -1,8 +1,11 @@
 import '../style.css';
 import { io } from 'socket.io-client';
 import { getAllRooms } from './roomSelection';
+import { superadminLogin } from './superadminLogin';
 import { renderUserView } from './userView';
 import { Room } from './roomSelection';
+import { printAdminView } from './adminView';
+
 const app = document.querySelector('#app');
 
 app!.innerHTML = `
@@ -29,6 +32,7 @@ socket.on('monitorRooms', () => {
 
 function init(): void {
   getAllRooms();
+  superadminLogin();
 }
 
 socket.on('userAlreadyInRoom', (data) => {
