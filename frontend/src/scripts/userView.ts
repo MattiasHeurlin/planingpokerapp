@@ -21,7 +21,7 @@ export function renderUserView(room: Room) {
   footer?.appendChild(awaitStart);
 }
 
-const renderUserCards = (users: User[]) => {
+export const renderUserCards = (users: User[]) => {
   console.log("renderUserCards", users);
   const main = document.querySelector(".main-content");
   const cardContainer = document.createElement("div");

@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const superadminRouter = require('./routes/superadmin');
 const { stringify } = require('querystring');
 
 const app = express();
@@ -39,6 +40,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
+app.use('/superadmin', superadminRouter);
 
 
 const ROOMS = [
@@ -121,9 +123,6 @@ app.get('/rooms', (req, res) => {
 
 })
 
-
-
-
 io.on('connection', (socket) => {
 
   socket.on('disconnect', () => {
@@ -149,7 +148,14 @@ io.on('connection', (socket) => {
   });
 
   socket.on('monitorRooms', () => {
-    io.emit('monitorRooms', ROOMS);
+    io.emit('monitorRooms');
+  });
+
+  socket.on('createRoom', (room) => {
+    ROOMS.push(room);
+
+    io.emit('monitorRooms');
+    io.to(socket.id).emit('createRoom', room);
   });
 
   socket.on('joinRoom', (userAndRoomIndex) => {
@@ -175,10 +181,10 @@ io.on('connection', (socket) => {
     }
     const user = {
       name: userAndRoomIndex.name,
-      socketId: socket.id
-    }
+      socketId: socket.id,
+    };
     room.users.push(user);
-    console.log(ROOMS[roomIndex])
+    console.log(ROOMS[roomIndex]);
     room.users.forEach((user) => io.to(user.socketId).emit('joinRoom', room));
   });
 
@@ -246,9 +252,11 @@ io.on('connection', (socket) => {
     const room = ROOMS[roomAndTopicAndDirection.roomIndex];
     const direction = roomAndTopicAndDirection.direction;
 
-    const indexOfTopic = room.upcomingTopics.indexOf(roomAndTopicAndDirection.topic);
+    const indexOfTopic = room.upcomingTopics.indexOf(
+      roomAndTopicAndDirection.topic
+    );
 
-    if (direction == 'down') {
+    if (direction == 'ner') {
       // handle swap down
       room.upcomingTopics[indexOfTopic] = room.upcomingTopics[indexOfTopic + 1];
       room.upcomingTopics[indexOfTopic + 1] = roomAndTopicAndDirection.topic;
