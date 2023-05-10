@@ -17,10 +17,9 @@ export function addAdminSockets() {
     printAdminView(room);
   });
 
-  socket.on('startGameAdmin', (room) => {
-    // lägg till rendera nästa fråga funktion här (admin-vy)
-    console.log(room);
-  });
+  socket.on("nextTopicAdmin", (room : Room) => {
+    printAdminView(room);
+  })
 
   socket.on('endSession', (room) => {
     renderEndSessionPage(room);
@@ -57,6 +56,10 @@ export function addUserSockets() {
     renderComingTopics(room.upcomingTopics);
   });
 
+  socket.on("nextTopic", (room) => {
+    renderRunningRoom(room);
+  })
+
   socket.on('userAlreadyInRoom', (data) => {
     console.log(data);
     const error = document.createElement('p');
@@ -73,11 +76,6 @@ export function addUserSockets() {
   socket.on('monitorRoom', (room: Room) => {
     console.log(room);
     renderRunningRoom(room);
-  });
-
-  socket.on('startGame', (room) => {
-    // lägg till rendera nästa fråga funktion här (user-vy)
-    console.log(room);
   });
 
   socket.on('vote', (room: Room) => {

@@ -1,9 +1,9 @@
 import { socket } from './main';
 
 export function startGame() {
-  socket.emit('startGame', socket.id);
+  socket.emit('startGame');
 }
 
 export function nextTopic() {
-  socket.emit('nextTopic', socket.id);
+  socket.emit('nextTopic');
 }

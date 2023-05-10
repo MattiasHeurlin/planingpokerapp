@@ -208,9 +208,29 @@ io.on('connection', (socket) => {
   });
 
   socket.on('vote', (voteValue) => {
+
     const room = ROOMS.find((room) =>
       room.users.find((user) => user.socketId === socket.id)
     );
+    let = userAlreadyVoted = false;
+
+    room.currentTopic.votes.forEach((vote, index) => {
+      if (vote.user.socketId === socket.id) {
+        if (vote.score === voteValue) {
+          room.currentTopic.votes.splice(index, 1);
+
+        } else {
+          vote.score = voteValue;
+        }
+        userAlreadyVoted = true;
+      }
+    })
+
+    if (userAlreadyVoted) {
+      room.users.forEach((user) => io.to(user.socketId).emit('vote', room));
+      return;
+    }
+    
     const user = room.users.find((user) => user.socketId === socket.id);
     const userAndScore = {
       user: user,
@@ -232,10 +252,11 @@ io.on('connection', (socket) => {
       };
 
       room.currentTopic.score = fibonacciValue;
-      console.log('all voted');
-      return room.users.forEach((user) =>
+
+      room.users.forEach((user) =>
         io.to(user.socketId).emit('allVoted', room)
       );
+      return io.to(room.admin.socketId).emit("allVoted", room);
     }
     console.log(userAndScore);
     room.users.forEach((user) => io.to(user.socketId).emit('vote', room));
@@ -263,25 +284,23 @@ io.on('connection', (socket) => {
     io.to(room.admin.socketId).emit('changeTopicOrderAdmin', room);
   });
 
-  socket.on('startGame', (socketId) => {
-    const room = ROOMS.find((room) => room.admin.socketId == socketId);
-
-    console.log(room);
+  socket.on('startGame', () => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
 
     if (room.upcomingTopics.length < 1) {
       return io.to(socket.id).emit('noTopics');
     }
 
-    room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
+    room.currentTopic = { title: room.upcomingTopics[0].title, votes: [] };
 
-    room.upcomingTopics.splice(0, 1);
+    room.upcomingTopics.shift();
 
-    room.users.forEach((user) => io.to(user.socketId).emit('startGame', room));
-    io.to(socket.id).emit('startGameAdmin', room);
+    room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
+    io.to(socket.id).emit('nextTopicAdmin', room);
   });
 
-  socket.on('nextTopic', (socketId) => {
-    const room = ROOMS.find((room) => room.admin.socketId == socketId);
+  socket.on('nextTopic', () => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
 
     if (room.currentTopic.votes.length < room.users.length) {
       return io.to(socket.id).emit('missingVotes');
@@ -289,12 +308,12 @@ io.on('connection', (socket) => {
 
     room.previousTopics.push(room.currentTopic);
 
-    room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
+    room.currentTopic = { title: room.upcomingTopics[0].title, votes: [] };
 
-    room.upcomingTopics.splice(0, 1);
+    room.upcomingTopics.shift();
 
     room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
-    io.to(socket.id).emit('nextTopicAdmin');
+    io.to(socket.id).emit('nextTopicAdmin', room);
   });
 
   socket.on('removeTopic', (topicIndex) => {
@@ -317,8 +336,8 @@ io.on('connection', (socket) => {
     io.to(socket.id).emit('addTopicAdmin', room);
   });
 
-  socket.on('endSession', (socketId) => {
-    const room = ROOMS.find((room) => room.admin.socketId == socketId);
+  socket.on('endSession', () => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
     const roomIndex = ROOMS.indexOf(room);
     const users = room.users;
     const admin = room.admin;

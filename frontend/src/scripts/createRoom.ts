@@ -8,9 +8,9 @@ class Room {
   public users: User[] = [];
   public usersWhoLeft: User[] = [];
   public upcomingTopics: Topic[] = [
-    { title: 'Nummer 1' },
-    { title: 'Nummer 2' },
-    { title: 'Nummer 3' },
+    { title: 'Nummer 1', votes: [] },
+    { title: 'Nummer 2', votes: [] },
+    { title: 'Nummer 3', votes: [] },
   ];
   public currentTopic: Topic = {};
   public previousTopics: Topic[] = [];

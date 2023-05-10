@@ -163,6 +163,9 @@ function createNextTopicBtn() {
   const nextTopicBtn = document.createElement('button') as HTMLButtonElement;
 
   nextTopicBtn.innerText = 'Nästa topic';
+  nextTopicBtn.addEventListener("click", () => {
+    socket.emit("nextTopic");
+  })
 
   // adminContainer.appendChild(nextTopicContainer);
   nextTopicContainer.appendChild(nextTopicBtn);
