@@ -1,12 +1,6 @@
 import { socket } from './main';
 import { Room, getAllRooms } from './roomSelection';
 
-///// * lägg denna i socketInit funktionen sen * /////
-socket.on('endSession', (room) => {
-  renderEndSessionPage(room);
-});
-///// ****************************************** /////
-
 export function endSession() {
   socket.emit('endSession', socket.id);
 }
@@ -35,10 +29,10 @@ export function renderEndSessionPage(room: Room) {
 
   const tableBody = document.createElement('tb');
 
-  room.finishedTopics.map((topic) => {
+  room.previousTopics.map((topic) => {
     const tableBodyRow = document.createElement('tr');
     const topicTitle = document.createElement('td');
-    topicTitle.innerHTML = topic.title;
+    topicTitle.innerHTML = topic.title || '';
     const topicScore = document.createElement('td');
     topic.score
       ? (topicScore.innerHTML = topic.score.toString())

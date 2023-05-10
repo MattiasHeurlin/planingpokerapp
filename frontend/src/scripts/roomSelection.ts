@@ -2,20 +2,25 @@ import { createRoomElements } from './createRoom';
 import { socket } from './main';
 
 export interface Room {
-  admin: string;
+  admin: Admin;
   users: User[];
   usersWhoLeft: string[];
   upcomingTopics: Topic[];
   currentTopic: CurrentTopic;
   previousTopics: Topic[];
-
 }
+
+export interface Admin {
+  name: string;
+  socketId: string;
+}
+
 export interface User {
   name: string;
   id?: string; // socket id
 }
 export interface Topic {
-  title: string;
+  title?: string;
   votes?: Vote[];
   score?: number;
 }
@@ -55,7 +60,7 @@ export function renderRooms(rooms: Room[]) {
     roomDiv.classList.add('room');
     const inputContainer = document.createElement('div');
     const roomName = document.createElement('h2');
-    roomName.innerText = room.admin;
+    roomName.innerText = room.admin.name;
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = 'Skriv in ditt namn';

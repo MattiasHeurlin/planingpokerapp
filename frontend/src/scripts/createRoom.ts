@@ -1,20 +1,14 @@
 import { socket } from './main';
-import { User } from './roomSelection';
-import { Topic } from './roomSelection';
+import { User, Admin, Topic } from './roomSelection';
 import { printAdminView } from './adminView';
-
-interface Admin {
-  name: string;
-  socketId: string;
-}
 
 class Room {
   public admin: Admin;
   public users: User[] = [];
   public usersWhoLeft: User[] = [];
   public upcomingTopics: Topic[] = [];
-  public currentTopic: Topic[] = [];
-  public finishedTopics: Topic[] = [];
+  public currentTopic: Topic = {};
+  public previousTopics: Topic[] = [];
 
   constructor(admin: string) {
     this.admin = { name: admin, socketId: socket.id };
@@ -27,7 +21,6 @@ export function createRoom(roomAdmin: string) {
   }
 
   const newRoom = new Room(roomAdmin);
-
 
   socket.on('createRoomAdmin', (room) => {
     printAdminView(room);

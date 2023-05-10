@@ -1,23 +1,23 @@
-import { Room } from "./roomSelection";
+import { Room } from './roomSelection';
 //import { renderUserCards } from "./userView";
 import { endSession } from './endSession';
-import { socket } from './main';
+// import { socket } from './main';
 import { startGame } from './voting';
 
 const adminContainer = document.querySelector('#adminView') as HTMLDivElement;
 
-adminContainer.classList.add('grid')
+adminContainer.classList.add('grid');
 
-export function printAdminView (room: Room){
-    console.log(room)
-    createAddNewTopic();
-    createUpcomingTopicsAdmin(room);
-    createStartVoting();
-    createNextTopicBtn();
-    createCurrentTopic(room);
-    createPreviousTopics(room);
-    createEndBtn();
-    //renderUserCards(room.users);
+export function printAdminView(room: Room) {
+  console.log(room);
+  createAddNewTopic();
+  createUpcomingTopicsAdmin(room);
+  createStartVoting();
+  createNextTopicBtn();
+  createCurrentTopic(room);
+  createPreviousTopics(room);
+  createEndBtn();
+  //renderUserCards(room.users);
 }
 
 // export default function getRoom(/*e*/) {
@@ -52,39 +52,48 @@ function createAddNewTopic() {
   addNewTopicContainer.appendChild(addNewTopicBtn);
 }
 
-function createUpcomingTopicsAdmin(room: Room){
+function createUpcomingTopicsAdmin(room: Room) {
+  const upcomingTopicsContainer = document.createElement(
+    'div'
+  ) as HTMLDivElement;
+  const upcomingTopicsTitle = document.createElement(
+    'h3'
+  ) as HTMLHeadingElement;
+  upcomingTopicsContainer.classList.add('admin-upcoming-topics');
+  upcomingTopicsTitle.innerText = 'Kommande topics';
+  adminContainer.appendChild(upcomingTopicsContainer);
+  upcomingTopicsContainer.appendChild(upcomingTopicsTitle);
 
-    const upcomingTopicsContainer = document.createElement('div') as HTMLDivElement;
-    const upcomingTopicsTitle = document.createElement('h3') as HTMLHeadingElement;
-    upcomingTopicsContainer.classList.add('admin-upcoming-topics')
-    upcomingTopicsTitle.innerText = 'Kommande topics';
-    adminContainer.appendChild(upcomingTopicsContainer);
-    upcomingTopicsContainer.appendChild(upcomingTopicsTitle);
+  for (let i = 0; i < room.upcomingTopics.length; i++) {
+    const topicContainer = document.createElement('div') as HTMLDivElement;
+    const removeUpcomingTopicBtn = document.createElement(
+      'button'
+    ) as HTMLButtonElement;
+    const upcomingTopic = document.createElement('p') as HTMLParagraphElement;
+    const moveTopicUpBtn = document.createElement(
+      'button'
+    ) as HTMLButtonElement;
+    const moveTopicDownBtn = document.createElement(
+      'button'
+    ) as HTMLButtonElement;
 
-    for (let i = 0; i < room.upcomingTopics.length; i++) {
-       const topicContainer = document.createElement('div') as HTMLDivElement;
-        const removeUpcomingTopicBtn = document.createElement('button') as HTMLButtonElement;
-        const upcomingTopic = document.createElement('p') as HTMLParagraphElement;
-        const moveTopicUpBtn = document.createElement('button') as HTMLButtonElement; 
-        const moveTopicDownBtn = document.createElement('button') as HTMLButtonElement;
-        
-        removeUpcomingTopicBtn.innerText = '-';
-        removeUpcomingTopicBtn.id = `${i}`;
-        upcomingTopic.innerText =  room.upcomingTopics[i].title;
-        moveTopicDownBtn.innerText = 'Ner';
-        moveTopicUpBtn.innerText = 'Upp';
-       
-        upcomingTopicsContainer.appendChild(topicContainer);
-        topicContainer.appendChild(removeUpcomingTopicBtn);
-        topicContainer.appendChild(upcomingTopic);
-        topicContainer.appendChild(moveTopicUpBtn);
-        topicContainer.appendChild(moveTopicDownBtn);
-    }
+    removeUpcomingTopicBtn.innerText = '-';
+    removeUpcomingTopicBtn.id = `${i}`;
+    upcomingTopic.innerText = room.upcomingTopics[i].title || '';
+    moveTopicDownBtn.innerText = 'Ner';
+    moveTopicUpBtn.innerText = 'Upp';
 
-    // moveTopicDownBtn.addEventListener('click', (e: any) => {
-    //     const direction = e.currentTarget.innerText.toLowerCase()
-    //     socket.emit('changeTopicOrder', direction)
-    // })
+    upcomingTopicsContainer.appendChild(topicContainer);
+    topicContainer.appendChild(removeUpcomingTopicBtn);
+    topicContainer.appendChild(upcomingTopic);
+    topicContainer.appendChild(moveTopicUpBtn);
+    topicContainer.appendChild(moveTopicDownBtn);
+  }
+
+  // moveTopicDownBtn.addEventListener('click', (e: any) => {
+  //     const direction = e.currentTarget.innerText.toLowerCase()
+  //     socket.emit('changeTopicOrder', direction)
+  // })
 }
 
 function createStartVoting() {
@@ -110,52 +119,8 @@ function createNextTopicBtn() {
   nextTopicContainer.appendChild(nextTopicBtn);
 }
 
-function createCurrentTopic(room: Room){
-
-    console.log(room.currentTopic)
-    const currentTopicContainer = document.createElement('div') as HTMLDivElement;
-    const currentTopicTitleContainer = document.createElement('div') as HTMLDivElement;
-    const currentTopicTitle = document.createElement('p') as HTMLParagraphElement;
-    const userAndAverageValueContainer = document.createElement('div') as HTMLDivElement;
-    const averageValueContainer = document.createElement('div') as HTMLDivElement;
-    const averageValueTitle = document.createElement('p') as HTMLParagraphElement;
-    const averageValue = document.createElement('p') as HTMLParagraphElement;
-
-    currentTopicContainer.classList.add('admin-main-content')
-    currentTopicTitle.innerText = `${room.currentTopic[0].title}`;
-    averageValueTitle.innerText = 'Medelvärde';
-    averageValue.innerText = `${room.currentTopic[0].score}`;
-
-    adminContainer.appendChild(currentTopicContainer);
-    currentTopicContainer.appendChild(currentTopicTitleContainer);
-    currentTopicTitleContainer.appendChild(currentTopicTitle);
-    currentTopicContainer.appendChild(userAndAverageValueContainer);
-    userAndAverageValueContainer.appendChild(averageValueContainer);
-    averageValueContainer.appendChild(averageValueTitle);
-    averageValueContainer.appendChild(averageValue);
-}
-
-function createPreviousTopics(room: Room){
-    console.log(room.finishedTopics)
-    const previousTopicContainer = document.createElement('div') as HTMLDivElement;
-    const previousTopicsTitle = document.createElement('h3') as HTMLHeadingElement;
-    
-    previousTopicContainer.classList.add('admin-previous-topics')
-    previousTopicsTitle.innerText = 'Tidigare topics';
-    previousTopicContainer.appendChild(previousTopicsTitle);
-
-    for (let i = 0; i < room.finishedTopics.length; i++) {
-        const topicContainer = document.createElement('div') as HTMLDivElement;
-        const previousTopic = document.createElement('p') as HTMLParagraphElement;
-        previousTopic.innerText = room.finishedTopics[i].title;
-        previousTopicContainer.appendChild(topicContainer);
-        topicContainer.appendChild(previousTopic); 
-    }
-
-    adminContainer.appendChild(previousTopicContainer);
-}
-
-function createCurrentTopic() {
+function createCurrentTopic(room: Room) {
+  console.log(room.currentTopic);
   const currentTopicContainer = document.createElement('div') as HTMLDivElement;
   const currentTopicTitleContainer = document.createElement(
     'div'
@@ -169,10 +134,13 @@ function createCurrentTopic() {
   const averageValue = document.createElement('p') as HTMLParagraphElement;
 
   currentTopicContainer.classList.add('admin-main-content');
-  currentTopicTitle.innerText = 'Test topic just nu';
-  averageValueTitle.innerText = 'Medelvärde';
-  averageValue.innerText = 'Test 123';
+  currentTopicTitle.innerText =
+    room.currentTopic.title || 'Väntar på nästa fråga';
 
+  // if (room.currentTopic.votes.length >= room.users.length) {
+  //   averageValueTitle.innerText = 'Medelvärde';
+  //   averageValue.innerText = `${room.currentTopic.score}`;
+  // }
   adminContainer.appendChild(currentTopicContainer);
   currentTopicContainer.appendChild(currentTopicTitleContainer);
   currentTopicTitleContainer.appendChild(currentTopicTitle);
@@ -182,24 +150,28 @@ function createCurrentTopic() {
   averageValueContainer.appendChild(averageValue);
 }
 
-function createPreviousTopics() {
+function createPreviousTopics(room: Room) {
+  console.log(room.previousTopics);
   const previousTopicContainer = document.createElement(
     'div'
   ) as HTMLDivElement;
   const previousTopicsTitle = document.createElement(
     'h3'
   ) as HTMLHeadingElement;
-  const topicContainer = document.createElement('div') as HTMLDivElement;
-  const previousTopic = document.createElement('p') as HTMLParagraphElement;
 
   previousTopicContainer.classList.add('admin-previous-topics');
   previousTopicsTitle.innerText = 'Tidigare topics';
-  previousTopic.innerText = 'Test';
+  previousTopicContainer.appendChild(previousTopicsTitle);
+
+  for (let i = 0; i < room.previousTopics.length; i++) {
+    const topicContainer = document.createElement('div') as HTMLDivElement;
+    const previousTopic = document.createElement('p') as HTMLParagraphElement;
+    previousTopic.innerText = room.previousTopics[i].title || '';
+    previousTopicContainer.appendChild(topicContainer);
+    topicContainer.appendChild(previousTopic);
+  }
 
   adminContainer.appendChild(previousTopicContainer);
-  previousTopicContainer.appendChild(previousTopicsTitle);
-  previousTopicContainer.appendChild(topicContainer);
-  topicContainer.appendChild(previousTopic);
 }
 
 function createEndBtn() {

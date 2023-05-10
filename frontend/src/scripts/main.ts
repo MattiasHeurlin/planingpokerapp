@@ -7,6 +7,7 @@ import { addVote, renderRunningRoom, renderUserView } from './userView';
 import { superadminLogin } from './superadminLogin';
 import { Room } from './roomSelection';
 import { printAdminView } from './adminView';
+import { renderEndSessionPage } from './endSession';
 
 const app = document.querySelector('#app');
 
@@ -18,7 +19,6 @@ app!.innerHTML = `
     <section class="previous-topics"><h2>Previous topics<h2></section>
     <footer class="footer"></footer>
   </div>`;
-
 
 export const socket = io('http://localhost:3000');
 
@@ -36,20 +36,20 @@ function addSockets() {
     app!.append(error);
   });
 
-  socket.on("joinRoom", (room: Room) => {
-    console.log(room)
+  socket.on('joinRoom', (room: Room) => {
+    console.log(room);
     // renderUserView(room); Går igång direkt förtillfället :FIXME
     renderRunningRoom(room);
-  })
-  
+  });
+
   socket.on('monitorRooms', () => {
     getAllRooms();
   });
-  
-  socket.on("monitorRoom", (room: Room) => {
-  console.log(room)
-  renderRunningRoom(room);
-  })
+
+  socket.on('monitorRoom', (room: Room) => {
+    console.log(room);
+    renderRunningRoom(room);
+  });
 
   socket.on('startGame', (room) => {
     // lägg till rendera nästa fråga funktion här (user-vy)
@@ -60,15 +60,15 @@ function addSockets() {
     // lägg till rendera nästa fråga funktion här (admin-vy)
     console.log(room);
   });
-  
-  socket.on("vote", (room: Room) => {
-  console.log(room)
-  addVote(room, false);
-  })
-  
-  socket.on("allVoted", (room: Room) => {
-  addVote(room, true);
-  })
+
+  socket.on('vote', (room: Room) => {
+    console.log(room);
+    addVote(room, false);
+  });
+
+  socket.on('allVoted', (room: Room) => {
+    addVote(room, true);
+  });
 
   socket.on('noTopics', () => {
     console.log('You need to add atleast 1 topic to start the game.');
@@ -77,8 +77,10 @@ function addSockets() {
   socket.on('missingVotes', () => {
     console.log("Everyone hasn't finished voting yet.");
   });
+
+  socket.on('endSession', (room) => {
+    renderEndSessionPage(room);
+  });
 }
-
-
 
 init();

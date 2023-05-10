@@ -42,10 +42,9 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/superadmin', superadminRouter);
 
-
 const ROOMS = [
   {
-    admin: 'Joe',
+    admin: { name: 'Joe' },
     users: [
       {
         name: 'Doe',
@@ -66,12 +65,12 @@ const ROOMS = [
       },
     ],
     currentTopic: {
-      title: "Bygga Youtube klon",
+      title: 'Bygga Youtube klon',
       votes: [
-          { user: 'gregory', score: 3 },
-          { user: 'Barry', score: 3 },
+        { user: { name: 'gregory' }, score: 3 },
+        { user: { name: 'Barry' }, score: 3 },
       ],
-      score: 0 // Avg score
+      score: 0, // Avg score
     },
     previousTopics: [
       { title: 'skapa admin-vy', score: 5 },
@@ -79,7 +78,7 @@ const ROOMS = [
     ],
   },
   {
-    admin: 'Troy',
+    admin: { name: 'Troy' },
     users: [
       {
         name: 'Lory',
@@ -100,20 +99,15 @@ const ROOMS = [
       },
     ],
     currentTopic: {
-      title: "Bygga Spotify klon",
-      votes: [
-          { user: 'gregory', score: 3 },
-      ],
+      title: 'Bygga Spotify klon',
+      votes: [{ user: 'gregory', score: 3 }],
     },
     previousTopics: [
       { title: 'skapa admin-vy', score: 5 },
       { title: 'random topic', score: 3 },
     ],
   },
-]
-;
-
-
+];
 const FIBONACCI = [0, 1, 3, 5, 8];
 // const ROOMS = [];
 
@@ -122,7 +116,6 @@ app.get('/rooms', (req, res) => {
 });
 
 io.on('connection', (socket) => {
-
   socket.on('disconnect', () => {
     const roomWithUser = ROOMS.find((room) =>
       room.users.find((user) => user.socketId === socket.id)
@@ -153,7 +146,7 @@ io.on('connection', (socket) => {
     ROOMS.push(room);
 
     io.emit('monitorRooms');
-    io.to(socket.id).emit('createRoom', room);
+    io.to(socket.id).emit('createRoomAdmin', room);
   });
 
   socket.on('joinRoom', (userAndRoomIndex) => {
@@ -215,7 +208,9 @@ io.on('connection', (socket) => {
   });
 
   socket.on('vote', (voteValue) => {
-    const room = ROOMS.find((room) => room.users.find((user) => user.socketId === socket.id));
+    const room = ROOMS.find((room) =>
+      room.users.find((user) => user.socketId === socket.id)
+    );
     const user = room.users.find((user) => user.socketId === socket.id);
     const userAndScore = {
       user: user,
@@ -237,12 +232,12 @@ io.on('connection', (socket) => {
       };
 
       room.currentTopic.score = fibonacciValue;
-      console.log('all voted')
+      console.log('all voted');
       return room.users.forEach((user) =>
         io.to(user.socketId).emit('allVoted', room)
       );
     }
-    console.log(userAndScore)
+    console.log(userAndScore);
     room.users.forEach((user) => io.to(user.socketId).emit('vote', room));
   });
 
@@ -309,10 +304,8 @@ io.on('connection', (socket) => {
 
     ROOMS.splice(roomIndex, 1);
 
-
     users.forEach((user) => io.to(user.socketId).emit('endSession'));
     io.to(admin.socketId).emit('endSession');
-
   });
 });
 
