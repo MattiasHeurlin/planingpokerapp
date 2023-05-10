@@ -244,21 +244,23 @@ io.on('connection', (socket) => {
   socket.on('changeTopicOrder', (topicIndexAndDirection) => {
     const room = ROOMS.find((room) => room.admin.socketId == socket.id);
     const direction = topicIndexAndDirection.direction;
-
     const topicIndex = topicIndexAndDirection.topicIndex;
+    const topicToChange = room.upcomingTopics[topicIndex];
 
     if (direction == 'ner') {
       // handle swap down
       room.upcomingTopics[topicIndex] = room.upcomingTopics[topicIndex + 1];
-      room.upcomingTopics[topicIndex + 1] = topicIndexAndDirection.topic;
+      room.upcomingTopics[topicIndex + 1] = topicToChange;
     } else {
       // handle swap up
       room.upcomingTopics[topicIndex] = room.upcomingTopics[topicIndex - 1];
-      room.upcomingTopics[topicIndex - 1] = topicIndexAndDirection.topic;
+      room.upcomingTopics[topicIndex - 1] = topicToChange;
     }
 
-    room.users.forEach((user) => io.to(user.socketId).emit("changeTopicOrder", room));
-    io.to(room.admin.socketId).emit("changeTopicOrderAdmin", room);
+    room.users.forEach((user) =>
+      io.to(user.socketId).emit('changeTopicOrder', room)
+    );
+    io.to(room.admin.socketId).emit('changeTopicOrderAdmin', room);
   });
 
   socket.on('startGame', (socketId) => {
