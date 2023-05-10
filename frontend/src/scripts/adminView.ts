@@ -59,6 +59,12 @@ function createAddNewTopic() {
   addTopicInput.placeholder = 'Ny topic';
   addNewTopicBtn.innerText = 'Lägg till';
 
+  addNewTopicBtn.addEventListener('click', () => {
+    const newTopicTitle = addTopicInput.value;
+
+    socket.emit('addTopic', newTopicTitle);
+  });
+
   // adminContainer.appendChild(addNewTopicContainer);
   addNewTopicContainer.appendChild(addTopicTitle);
   addNewTopicContainer.appendChild(addTopicInput);
