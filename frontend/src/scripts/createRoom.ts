@@ -3,8 +3,13 @@ import { User } from './roomSelection';
 import { Topic } from './roomSelection';
 import { printAdminView } from './adminView';
 
+interface Admin {
+  name: string;
+  socketId: string;
+}
+
 class Room {
-  public admin: string;
+  public admin: Admin;
   public users: User[] = [];
   public usersWhoLeft: User[] = [];
   public upcomingTopics: Topic[] = [];
@@ -12,7 +17,7 @@ class Room {
   public finishedTopics: Topic[] = [];
 
   constructor(admin: string) {
-    this.admin = admin;
+    this.admin = { name: admin, socketId: socket.id };
   }
 }
 
@@ -23,10 +28,12 @@ export function createRoom(roomAdmin: string) {
 
   const newRoom = new Room(roomAdmin);
 
-  socket.on('createRoom', (room) => {
+
+  socket.on('createRoomAdmin', (room) => {
     printAdminView(room);
+
     console.log(room);
-    socket.off('createRoom');
+    socket.off('createRoomAdmin');
   });
 
   socket.emit('createRoom', newRoom);
