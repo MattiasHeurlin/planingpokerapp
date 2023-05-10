@@ -1,4 +1,18 @@
+$primary: #4338ca;
+$secondary: #D926AA;
+$accent: #1FB2A5;
+$neutral: #6b7280;
+$base-100: #1f2937;
+$info: #3ABFF8;
+$success: #36D399;
+$warning: #FBBD23;
+$error: #ef4444;
+
+@import './styles/normalize';
 @import './styles/general';
 @import './styles/header';
 @import './styles/roomSelect';
 @import './styles/superadminLogin';
+@import './styles/userView';
+@import './styles/adminView';
+
