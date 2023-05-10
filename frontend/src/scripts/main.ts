@@ -33,6 +33,10 @@ function addSockets() {
     printAdminView(room);
   });
 
+  socket.on('removeTopicAdmin', (room) => {
+    printAdminView(room);
+  });
+
   socket.on('userAlreadyInRoom', (data) => {
     console.log(data);
     const error = document.createElement('p');
