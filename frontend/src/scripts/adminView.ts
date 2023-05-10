@@ -103,9 +103,11 @@ export function createUpcomingTopicsAdmin(room: Room) {
     } else if (i >= room.upcomingTopics.length - 1) {
       moveTopicDownBtn.disabled = true;
     }
-    // removeUpcomingTopicBtn.addEventListener('click', (e: MouseEvent) => {
 
-    // })
+    removeUpcomingTopicBtn.addEventListener('click', () => {
+      const topicIndex = i;
+      socket.emit('removeTopic', topicIndex);
+    });
 
     moveTopicDownBtn.addEventListener('click', (e: MouseEvent) => {
       const direction = (
