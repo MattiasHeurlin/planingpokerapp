@@ -302,6 +302,9 @@ io.on('connection', (socket) => {
 
     room.upcomingTopics.splice(topicIndex, 1);
 
+    room.users.forEach((user) =>
+      io.to(user.socketId).emit('removeTopic', room)
+    );
     io.to(socket.id).emit('removeTopicAdmin', room);
   });
 
@@ -310,6 +313,7 @@ io.on('connection', (socket) => {
 
     room.upcomingTopics.push({ title: topicTitle });
 
+    room.users.forEach((user) => io.to(user.socketId).emit('addTopic', room));
     io.to(socket.id).emit('addTopicAdmin', room);
   });
 
