@@ -265,16 +265,18 @@ io.on('connection', (socket) => {
     io.to(socket.id).emit('nextTopicAdmin');
   });
 
-  socket.on('endGame', (roomIndex) => {
-    const room = ROOMS[roomIndex];
-    const finishedTopics = room.finishedTopics;
+  socket.on('endSession', (socketId) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socketId);
+    const roomIndex = ROOMS.indexOf(room);
     const users = room.users;
+    const admin = room.admin;
+
+    // spara rummet i databasen här
 
     ROOMS.splice(roomIndex, 1);
 
-    users.forEach((user) =>
-      io.to(user.socketId).emit('endGame', finishedTopics)
-    );
+    users.forEach((user) => io.to(user.socketId).emit('endSession'));
+    io.to(admin.socketId).emit('endSession');
   });
 });
 

@@ -1,5 +1,6 @@
 import { Room } from "./roomSelection";
 //import { renderUserCards } from "./userView";
+import { endSession } from './endSession';
 import { socket } from './main';
 import { startGame } from './voting';
 
@@ -50,7 +51,6 @@ function createAddNewTopic() {
   addNewTopicContainer.appendChild(addTopicInput);
   addNewTopicContainer.appendChild(addNewTopicBtn);
 }
-
 
 function createUpcomingTopicsAdmin(room: Room){
 
@@ -208,6 +208,7 @@ function createEndBtn() {
 
   endContainer.classList.add('admin-end');
   endBtn.innerText = 'Avsluta';
+  endBtn.addEventListener('click', endSession);
 
   adminContainer.appendChild(endContainer);
   endContainer.appendChild(endBtn);
