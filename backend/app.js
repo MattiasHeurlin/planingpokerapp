@@ -118,10 +118,8 @@ const FIBONACCI = [0, 1, 3, 5, 8];
 // const ROOMS = [];
 
 app.get('/rooms', (req, res) => {
-
-  res.json(ROOMS)
-
-})
+  res.json(ROOMS);
+});
 
 io.on('connection', (socket) => {
 
@@ -267,18 +265,29 @@ io.on('connection', (socket) => {
     }
   });
 
-  socket.on('startGame', (roomIndex) => {
-    const room = ROOMS[roomIndex];
+  socket.on('startGame', (socketId) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socketId);
+
+    console.log(room);
+
+    if (room.upcomingTopics.length < 1) {
+      return io.to(socket.id).emit('noTopics');
+    }
 
     room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
 
     room.upcomingTopics.splice(0, 1);
 
     room.users.forEach((user) => io.to(user.socketId).emit('startGame', room));
+    io.to(socket.id).emit('startGameAdmin', room);
   });
 
-  socket.on('nextTopic', (roomIndex) => {
-    const room = ROOMS[roomIndex];
+  socket.on('nextTopic', (socketId) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socketId);
+
+    if (room.currentTopic.votes.length < room.users.length) {
+      return io.to(socket.id).emit('missingVotes');
+    }
 
     room.previousTopics.push(room.currentTopic);
 
@@ -287,18 +296,23 @@ io.on('connection', (socket) => {
     room.upcomingTopics.splice(0, 1);
 
     room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
+    io.to(socket.id).emit('nextTopicAdmin');
   });
 
-  socket.on('endGame', (roomIndex) => {
-    const room = ROOMS[roomIndex];
-    const previousTopics = room.previousTopics;
+  socket.on('endSession', (socketId) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socketId);
+    const roomIndex = ROOMS.indexOf(room);
     const users = room.users;
+    const admin = room.admin;
+
+    // spara rummet i databasen här
 
     ROOMS.splice(roomIndex, 1);
 
-    users.forEach((user) =>
-      io.to(user.socketId).emit('endGame', previousTopics)
-    );
+
+    users.forEach((user) => io.to(user.socketId).emit('endSession'));
+    io.to(admin.socketId).emit('endSession');
+
   });
 });
 
