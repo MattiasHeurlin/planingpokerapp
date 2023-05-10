@@ -1,7 +1,7 @@
 import { printAdminView } from './adminView';
 import { renderEndSessionPage } from './endSession';
 import { app, socket } from './main';
-import { addVote, renderComingTopics, renderRunningRoom } from './userView';
+import { addVote, renderComingTopics, renderRunningRoom, renderUserView } from './userView';
 import { Room } from './roomSelection';
 
 export function addAdminSockets() {
@@ -69,8 +69,7 @@ export function addUserSockets() {
 
   socket.on('joinRoom', (room: Room) => {
     console.log(room);
-    // renderUserView(room); Går igång direkt förtillfället :FIXME
-    renderRunningRoom(room);
+     renderUserView(room); 
   });
 
   socket.on('monitorRoom', (room: Room) => {

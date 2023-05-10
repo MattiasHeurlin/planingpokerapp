@@ -246,11 +246,6 @@ io.on('connection', (socket) => {
       const averageValue = scoresAdded / room.currentTopic.votes.length;
       const fibonacciValue = roundToNearestFibonacci(averageValue);
 
-      const lastUserScoreAndFibonacci = {
-        userScore: userAndScore,
-        averageValue: fibonacciValue,
-      };
-
       room.currentTopic.score = fibonacciValue;
 
       room.users.forEach((user) =>

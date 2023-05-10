@@ -11,7 +11,7 @@ export function renderUserView(room: Room) {
   main!.innerHTML = '';
   header!.innerHTML = '';
   const h1 = document.createElement('h1');
-  h1.innerHTML = 'Rum Admin: ' + room.admin;
+  h1.innerHTML = 'Rum Admin: ' + room.admin.name;
   header!.append(h1);
   const h2 = document.createElement('h2');
   h2.innerHTML = 'Användare i rummet: ';
@@ -94,6 +94,7 @@ export function renderMainTopic(topic: Topic) {
 
 export function renderVotingCards() {
   const footer = document.querySelector('.footer');
+  footer!.innerHTML = '';
   const cardContainer = document.createElement('div');
   cardContainer.classList.add('voting-card-container');
   for (let i = 0; i < 6; i++) {
@@ -152,6 +153,7 @@ function castVote(value: number) {
 
 export function addVote(room: Room, revealScore: boolean) {
   const main = document.querySelector('.main-content');
+
   const findVoteCardContainer = document.querySelector('.vote-card-container');
   if (findVoteCardContainer) {
     main!.removeChild(findVoteCardContainer);
@@ -173,7 +175,12 @@ export function addVote(room: Room, revealScore: boolean) {
     voteCardContainer.appendChild(voteCard);
   });
   if (revealScore) {
+    const findAvgScore = document.querySelector('.avg-score');
+    if (findAvgScore) {
+      main!.removeChild(findAvgScore);
+    }
     const avgScore = document.createElement('h2');
+    avgScore.classList.add('avg-score');
     avgScore.innerHTML = 'SnittPoäng: ' + room.currentTopic.score;
     main!.append(avgScore);
   }
