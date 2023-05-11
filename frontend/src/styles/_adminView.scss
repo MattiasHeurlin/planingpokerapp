@@ -43,6 +43,7 @@
 
         button{
             height: 35px;
+            width: 130px;
             border: none;
             border-radius: 10px;
             background-color: $secondary;
@@ -52,6 +53,16 @@
 
     .admin-next-topic{
         grid-area: 1 / 6 / 5 / 4;
+        margin: 0 auto;
+        margin-top: 80px;
+
+        button{
+            height: 35px;
+            border: none;
+            border-radius: 10px;
+            background-color: $third;
+            color: white;
+        }
     }
 
     .admin-upcoming-topics{
