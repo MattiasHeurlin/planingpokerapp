@@ -20,7 +20,6 @@ export function printAdminView(room: Room) {
     <div class="admin-end"></div>
   </div>`;
 
-  console.log(room);
   createAddNewTopic();
   createUpcomingTopicsAdmin(room);
   createStartVoting();
@@ -72,7 +71,6 @@ function createAddNewTopic() {
 }
 
 export function createUpcomingTopicsAdmin(room: Room) {
-  console.log(room);
   const upcomingTopicsContainer = document.querySelector(
     '.admin-upcoming-topics'
   ) as HTMLDivElement;
@@ -163,16 +161,15 @@ function createNextTopicBtn() {
   const nextTopicBtn = document.createElement('button') as HTMLButtonElement;
 
   nextTopicBtn.innerText = 'Nästa topic';
-  nextTopicBtn.addEventListener("click", () => {
-    socket.emit("nextTopic");
-  })
+  nextTopicBtn.addEventListener('click', () => {
+    socket.emit('nextTopic');
+  });
 
   // adminContainer.appendChild(nextTopicContainer);
   nextTopicContainer.appendChild(nextTopicBtn);
 }
 
 function createCurrentTopic(room: Room) {
-  console.log(room.currentTopic);
   const currentTopicContainer = document.querySelector(
     '.main-content'
   ) as HTMLDivElement;
@@ -188,8 +185,9 @@ function createCurrentTopic(room: Room) {
   const averageValueTitle = document.createElement('p') as HTMLParagraphElement;
   const averageValue = document.createElement('p') as HTMLParagraphElement;
 
-  currentTopicTitle.innerText =
-    room.currentTopic.title || 'Väntar på nästa fråga';
+  currentTopicTitle.innerText = room.currentTopic
+    ? room.currentTopic.title
+    : 'Väntar på nästa fråga';
 
   // if (room.currentTopic.votes.length >= room.users.length) {
   //   averageValueTitle.innerText = 'Medelvärde';
@@ -205,7 +203,6 @@ function createCurrentTopic(room: Room) {
 }
 
 function createPreviousTopics(room: Room) {
-  console.log(room.previousTopics);
   const previousTopicContainer = document.querySelector(
     '.admin-previous-topics'
   ) as HTMLDivElement;

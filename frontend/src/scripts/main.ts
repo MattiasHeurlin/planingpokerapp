@@ -1,6 +1,6 @@
 import '../style.css';
 import { io } from 'socket.io-client';
-import { getAllRooms } from './roomSelection';
+import { getAllRooms, monitorRooms } from './roomSelection';
 import { superadminLogin } from './superadminLogin';
 
 export const app = document.querySelector('#app');
@@ -19,10 +19,7 @@ export const socket = io('http://localhost:3000');
 function init(): void {
   getAllRooms();
   superadminLogin();
-
-  socket.on('monitorRooms', () => {
-    getAllRooms();
-  });
+  monitorRooms();
 }
 
 init();
