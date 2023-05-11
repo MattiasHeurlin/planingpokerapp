@@ -1,0 +1,52 @@
+.grid{
+    height: 100vh;
+    width: 100vw;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    grid-template-rows: 0.5fr repeat(4, 1fr);
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
+
+    .admin-add-topic{
+        grid-area: 1 / 3 / 1 / 1;
+    }
+
+    .admin-start-vote{
+        grid-area: 1 / 4 / 5 / 3;
+    }
+
+    .admin-next-topic{
+        grid-area: 1 / 6 / 5 / 4;
+    }
+
+    .admin-upcoming-topics{
+        grid-area: 2 / 1 / 5 / 2;
+        outline: 1px solid black;
+        text-align: center;
+
+        div:nth-child(odd) {
+            background-color: rgba(0, 88, 176, 0.593);
+        }
+    }
+
+    .admin-main-content {
+        grid-area: 2 / 2 / 5 / 5;
+        outline: 1px solid black;
+    }
+
+    
+    .admin-previous-topics {
+        grid-area: 2 / 5 / 5 / 6;
+        outline: 1px solid black;
+        text-align: center;
+    
+        div:nth-child(odd) {
+            background-color: rgba(0, 88, 176, 0.593);
+        }
+    }
+
+    .admin-end{
+        grid-area: 6 / 1 / 5 / 1;
+    }
+    
+}
