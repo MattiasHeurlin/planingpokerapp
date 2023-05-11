@@ -2,7 +2,7 @@ import { socket } from './main';
 import { Room, getAllRooms } from './roomSelection';
 
 export function endSession() {
-  socket.emit('endSession', socket.id);
+  socket.emit('endSession');
 }
 
 export function renderEndSessionPage(room: Room) {
