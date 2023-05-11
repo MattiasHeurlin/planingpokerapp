@@ -66,13 +66,59 @@
     }
 
     .admin-upcoming-topics{
+        margin-top: 30px;
         grid-area: 2 / 1 / 5 / 2;
-        outline: 1px solid black;
         text-align: center;
+        color: white;
+        height: fit-content;
 
-        div:nth-child(odd) {
-            background-color: rgba(0, 88, 176, 0.593);
+        div{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            height: 70px;
+            width: 250px;
+            background-color: $info;
+            margin-bottom: 20px;
+            margin-left: 20px;
+            border-radius: 20px;
+
+            .remove-upcoming-topic-btn{
+                background-color: black;
+                height: 30px;
+                width: 35px;
+                font-size: 1.5rem;
+                border: none;
+                border-radius: 5px;
+                margin-left: 10px;
+                margin-right: 15px;
+                color: white;
+            }
+
+            .move-topic-up-btn{
+                background-color: black;
+                color: white;
+                border: none;
+                margin-left: 15px;
+                height: 30px;
+                border-radius: 5px;
+            }
+
+            .move-topic-down-btn{
+                background-color: black;
+                color: white;
+                border: none;
+                margin-left: 5px;
+                margin-right: 10px;
+                height: 30px;
+                border-radius: 5px;
+            }
         }
+
+        
+
+        
+
     }
 
     .admin-main-content {

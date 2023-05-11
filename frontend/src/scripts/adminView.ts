@@ -97,10 +97,13 @@ export function createUpcomingTopicsAdmin(room: Room) {
     ) as HTMLButtonElement;
 
     removeUpcomingTopicBtn.innerText = '-';
+    removeUpcomingTopicBtn.classList.add('remove-upcoming-topic-btn')
     removeUpcomingTopicBtn.id = `${i}`;
     upcomingTopic.innerText = room.upcomingTopics[i].title || '';
     moveTopicDownBtn.innerText = 'Ner';
+    moveTopicDownBtn.classList.add('move-topic-down-btn')
     moveTopicUpBtn.innerText = 'Upp';
+    moveTopicUpBtn.classList.add('move-topic-up-btn')
 
     if (room.upcomingTopics.length == 1) {
       moveTopicUpBtn.disabled = true;
