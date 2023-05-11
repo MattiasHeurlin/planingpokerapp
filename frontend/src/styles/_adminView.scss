@@ -35,6 +35,11 @@
             border: black solid 1.5px;
             border-radius: 2px;
             margin-right:5px;
+
+            &:hover{
+                background-color: $primary;
+                color: white;
+            }
         }
     }
 
@@ -50,6 +55,11 @@
             border-radius: 2px;
             background-color: transparent;
             color: white;
+
+            &:hover{
+                background-color: $secondary;
+                color: white;
+            }
         }
     }
 
@@ -64,6 +74,11 @@
             border-radius: 2px;
             background-color: transparent;
             color: white;
+
+            &:hover{
+                background-color: $primary;
+                color: white;
+            }
         }
     }
 
@@ -95,6 +110,11 @@
                 margin-left: 10px;
                 margin-right: 15px;
                 color: white;
+
+                &:hover{
+                    background-color: $error;
+                    color: white;
+                }
             }
 
             .move-topic-up-btn{
@@ -105,7 +125,13 @@
                 height: 30px;
                 border-radius: 2px;
 
+                &:hover{
+                    background-color: black;
+                    color: white;
+                }
+
                 &:disabled{
+                    background-color: transparent;
                     color: grey;
                 }
             }
@@ -119,7 +145,13 @@
                 height: 30px;
                 border-radius: 2px;
 
+                &:hover{
+                    background-color: black;
+                    color: white;
+                }
+
                 &:disabled{
+                    background-color: transparent;
                     color: grey;
                 }
             }
@@ -140,7 +172,8 @@
 
         .avg-score{
                 color: rgb(185, 193, 37);
-            }
+        }
+
         .vote-card-container{
             color: white;
             display: flex;
@@ -193,6 +226,11 @@
             border-radius: 2px;
             background-color: transparent;
             color: white;
+
+            &:hover{
+                background-color: $secondary;
+                color: white;
+            }
         }
     }
 }
