@@ -6,6 +6,9 @@ export function endSession() {
 }
 
 export function renderEndSessionPage(room: Room) {
+  if (localStorage.getItem('user')) {
+    localStorage.removeItem('user');
+  }
   const main = document.querySelector<HTMLDivElement>('.main-content');
   main!.innerHTML = '';
 
@@ -17,17 +20,17 @@ export function renderEndSessionPage(room: Room) {
   backBtn.addEventListener('click', getAllRooms);
 
   const topicsTable = document.createElement('table');
-  const tableHead = document.createElement('th');
+  const tableHead = document.createElement('thead');
   const tableHeadRow = document.createElement('tr');
-  const tableHeadTopic = document.createElement('td');
+  const tableHeadTopic = document.createElement('th');
   tableHeadTopic.innerHTML = 'Titel';
-  const tableHeadScore = document.createElement('td');
+  const tableHeadScore = document.createElement('th');
   tableHeadScore.innerHTML = 'Poäng';
 
   tableHeadRow.append(tableHeadTopic, tableHeadScore);
   tableHead.appendChild(tableHeadRow);
 
-  const tableBody = document.createElement('tb');
+  const tableBody = document.createElement('tbody');
 
   room.previousTopics.map((topic) => {
     const tableBodyRow = document.createElement('tr');
