@@ -38,6 +38,16 @@
 
     .admin-start-vote{
         grid-area: 1 / 4 / 5 / 3;
+        margin: 0 auto;
+        margin-top: 80px;
+
+        button{
+            height: 35px;
+            border: none;
+            border-radius: 10px;
+            background-color: $secondary;
+            color: white;
+        }
     }
 
     .admin-next-topic{
