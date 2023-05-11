@@ -116,20 +116,29 @@ export function renderSessionHistory() {
 
 function renderSessionInfo(session: any) {
     app!.innerHTML = '';
+    const sessionHistoryContainer: HTMLDivElement = document.createElement('div');
+    const sessionHeading: HTMLHeadingElement = document.createElement('h1');
     const sessionHistoryAdminAndUsers: HTMLParagraphElement = document.createElement('p');
+
+    sessionHistoryContainer.classList.add('sessionHistoryContainer');
+    sessionHeading.classList.add('sessionHeading');
+
+    sessionHeading.innerHTML = 'Planning Poker'
+
+    sessionHistoryContainer.append(sessionHeading);
     
     session.topics.forEach((topic: { title: string; averageScore: number; }) => {
         const topicTitleAndScore: HTMLParagraphElement = document.createElement('p');
         sessionHistoryAdminAndUsers.innerHTML = `Admin: ${session.adminName} <br> Users: ${session.userNames}`;
-        topicTitleAndScore.innerHTML = `Topic: ${topic.title} | Medelvärde: ${topic.averageScore}`;
+        topicTitleAndScore.innerHTML = `${topic.title} - Medelvärde: ${topic.averageScore} SP`;
         
         sessionHistoryAdminAndUsers.classList.add('sessionHistoryAdminAndUsers');
         topicTitleAndScore.classList.add('topicTitleAndScore');
 
-        app!.append(topicTitleAndScore);
+        sessionHistoryContainer.append(topicTitleAndScore);
     })
 
-    app!.append(sessionHistoryAdminAndUsers);
+    app!.append(sessionHistoryContainer, sessionHistoryAdminAndUsers);
     superadminBackBtn();
 };
 
