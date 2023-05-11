@@ -1,6 +1,8 @@
 .grid{
     height: 100vh;
     width: 100vw;
+    max-width: 1200px;
+    margin: 0 auto;
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     grid-template-rows: 0.5fr repeat(4, 1fr);
@@ -83,7 +85,6 @@
     }
 
     .admin-upcoming-topics{
-        margin-top: 30px;
         grid-area: 2 / 1 / 5 / 2;
         text-align: center;
         color: white;
@@ -201,6 +202,8 @@
         text-align: center;
         color: white;
         margin-top: 30px;
+        margin: 0 auto;
+        margin-right: 20px;
         
         div{
             display: flex;
@@ -233,4 +236,88 @@
             }
         }
     }
+}
+
+@media screen and (max-width: 850px) {
+
+    .grid{
+        .admin-add-topic{
+            p{
+                margin-left: 10px;
+                margin-bottom: 5px;
+            }
+
+            input{
+                height: 30px;
+                width: 150px;
+            }
+    
+            button{
+                font-size: 0.8rem;
+            }
+        }
+    
+        .admin-start-vote{
+            button{
+                width: 110px;
+                font-size: 0.8rem;
+            }
+        }
+    
+        .admin-next-topic{
+            button{
+                font-size: 0.8rem;
+            }
+        }
+    
+        .admin-upcoming-topics{
+            div{
+                height: 50px;
+                width: 170px;
+
+                .remove-upcoming-topic-btn{
+                    height: 30px;
+                    width: 35px;
+                    font-size: 1rem;
+                }
+    
+                .move-topic-up-btn{
+                    height: 30px;
+                    width: 35px;
+                    font-size: 0.8rem;
+                }
+    
+                .move-topic-down-btn{
+                    height: 30px;
+                    width: 35px;
+                    font-size: 0.8rem;
+                }
+            }
+        }
+    
+        .main-content {
+            .current-topic-title-container{
+                width: 170px;
+            }
+    
+            .avg-score{
+                font-size: 1.5rem;
+            }
+        }
+    
+        
+        .admin-previous-topics {
+            div{
+                height: 40px;
+                width: 130px;
+            }
+        }
+    
+        .admin-end{
+            button{
+                font-size: 0.8rem;
+            }
+        }
+    }
+
 }
