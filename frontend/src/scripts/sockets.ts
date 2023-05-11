@@ -1,10 +1,22 @@
 import { printAdminView } from './adminView';
 import { renderEndSessionPage } from './endSession';
 import { app, socket } from './main';
-import { addVote, renderComingTopics, renderRunningRoom, renderUserView } from './userView';
+import { addVote, renderRunningRoom, renderUserView } from './userView';
 import { Room } from './roomSelection';
 
 export function addAdminSockets() {
+  socket.on('userLeftAdmin', (room) => {
+    console.log(
+      room.usersWhoLeft[room.usersWhoLeft.length - 1].name +
+        ' has left the room'
+    );
+    printAdminView(room);
+  });
+
+  socket.on('renderRoomAdmin', (room) => {
+    printAdminView(room);
+  });
+
   socket.on('changeTopicOrderAdmin', (room) => {
     printAdminView(room);
   });
@@ -17,9 +29,9 @@ export function addAdminSockets() {
     printAdminView(room);
   });
 
-  socket.on("nextTopicAdmin", (room : Room) => {
+  socket.on('nextTopicAdmin', (room: Room) => {
     printAdminView(room);
-  })
+  });
 
   socket.on('endSession', (room) => {
     renderEndSessionPage(room);
@@ -44,21 +56,29 @@ export function addAdminSockets() {
 }
 
 export function addUserSockets() {
+  socket.on('userLeft', (room) => {
+    isRoomRunning(room);
+  });
+
+  socket.on('renderRoomUser', (room) => {
+    isRoomRunning(room);
+  });
+
   socket.on('changeTopicOrder', (room) => {
-    renderComingTopics(room.upcomingTopics);
+    isRoomRunning(room);
   });
 
   socket.on('removeTopic', (room) => {
-    renderComingTopics(room.upcomingTopics);
+    isRoomRunning(room);
   });
 
   socket.on('addTopic', (room) => {
-    renderComingTopics(room.upcomingTopics);
+    isRoomRunning(room);
   });
 
-  socket.on("nextTopic", (room) => {
-    renderRunningRoom(room);
-  })
+  socket.on('nextTopic', (room) => {
+    isRoomRunning(room);
+  });
 
   socket.on('userAlreadyInRoom', (data) => {
     console.log(data);
@@ -68,13 +88,11 @@ export function addUserSockets() {
   });
 
   socket.on('joinRoom', (room: Room) => {
-    console.log(room);
-     renderUserView(room); 
+    isRoomRunning(room);
   });
 
   socket.on('monitorRoom', (room: Room) => {
-    console.log(room);
-    renderRunningRoom(room);
+    isRoomRunning(room);
   });
 
   socket.on('vote', (room: Room) => {
@@ -89,4 +107,11 @@ export function addUserSockets() {
   socket.on('endSession', (room) => {
     renderEndSessionPage(room);
   });
+}
+
+function isRoomRunning(room: Room) {
+  if (room.currentTopic) {
+    return renderRunningRoom(room);
+  }
+  renderUserView(room);
 }
