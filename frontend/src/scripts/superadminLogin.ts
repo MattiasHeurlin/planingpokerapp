@@ -132,7 +132,7 @@ function renderSessionInfo(session: any) {
 
         app!.append(topicTitleAndScore);
     })
-    //superadminBackBtn();
+    superadminBackBtn();
 };
 
 export function superadminLogout() {
@@ -143,5 +143,17 @@ export function superadminLogout() {
 
     superadminLogoutBtn.addEventListener('click', () => {
         window.location.reload();
+    });
+};
+
+export function superadminBackBtn() {
+    const superadminBackBtn: HTMLButtonElement = document.createElement('button');
+    superadminBackBtn.innerText = 'Tillbaka';
+    superadminBackBtn.classList.add('superadminBackBtn');
+    app!.append(superadminBackBtn);
+
+    superadminBackBtn.addEventListener('click', () => {
+        app!.innerHTML = '';
+        renderSessionHistory();
     });
 };
