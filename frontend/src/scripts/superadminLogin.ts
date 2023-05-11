@@ -113,11 +113,24 @@ export function renderSessionHistory() {
         sessionHistoryLi.innerHTML = `Admin: ${session.admin.name}`;
         sessionHistoryUl.append(sessionHistoryLi);
 
-        //sessionHistoryLi.addEventListener('click', () => renderSessionInfo(session));
+        sessionHistoryLi.addEventListener('click', () => renderSessionInfo(session));
     });
 
     app!.innerHTML = '';
     app!.append(sessionHistoryHeading, sessionHistorySubHeading, sessionHistoryUl);
 
     //superadminLogout();
+};
+
+function renderSessionInfo(session: any) {
+    app!.innerHTML = '';
+    
+    session.previousTopics.forEach((topic: { title: string; score: number; }) => {
+        const topicTitleAndScore: HTMLParagraphElement = document.createElement('p');
+        topicTitleAndScore.innerHTML = `Topic: ${topic.title} | Medelvärde: ${topic.score}`;
+        topicTitleAndScore.classList.add('topicTitleAndScore');
+
+        app!.append(topicTitleAndScore);
+    })
+    //superadminBackBtn();
 };
