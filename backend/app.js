@@ -9,6 +9,7 @@ require('dotenv').config();
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
+const superadminRouter = require('./routes/superadmin');
 const { stringify } = require('querystring');
 
 const app = express();
@@ -39,60 +40,82 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
-
+app.use('/superadmin', superadminRouter);
 
 const ROOMS = [
   {
-    admin: 'Joe',
-
-    users: [{
-      name: 'Doe',
-      socketId: '123'
-     }, {
-      name: 'Doe',
-      socketId: '123'
-     }],
+    admin: { name: 'Joe' },
+    users: [
+      {
+        name: 'Doe',
+        socketId: 1,
+      },
+      {
+        name: 'Foe',
+        socketId: 2,
+      },
+    ],
     usersWhoLeft: ['Donny'],
-    /*
-    topics: [
+    upcomingTopics: [
       {
         title: 'Skapa frontend',
-        score: 5,
       },
       {
         title: 'Skapa backend',
-        score: 5,
       },
     ],
     currentTopic: {
-        title: topics[currentIndex].title,
-        votes: [
-          {user: user, score: score},
-          {user: user, score: score},
-          {user: user, score: score},
-          {user: user, score: score}
-        ]
-    }
-  */
+      title: 'Bygga Youtube klon',
+      votes: [
+        { user: { name: 'gregory' }, score: 3 },
+        { user: { name: 'Barry' }, score: 3 },
+      ],
+      score: 0, // Avg score
+    },
+    previousTopics: [
+      { title: 'skapa admin-vy', score: 5 },
+      { title: 'random topic', score: 3 },
+    ],
   },
-]
-  ;
-
-
+  {
+    admin: { name: 'Troy' },
+    users: [
+      {
+        name: 'Lory',
+        socketId: 1,
+      },
+      {
+        name: 'Barry',
+        socketId: 2,
+      },
+    ],
+    usersWhoLeft: ['Donny'],
+    upcomingTopics: [
+      {
+        title: 'Skapa frontend',
+      },
+      {
+        title: 'Skapa backend',
+      },
+    ],
+    currentTopic: {
+      title: 'Bygga Spotify klon',
+      votes: [{ user: 'gregory', score: 3 }],
+    },
+    previousTopics: [
+      { title: 'skapa admin-vy', score: 5 },
+      { title: 'random topic', score: 3 },
+    ],
+  },
+];
 const FIBONACCI = [0, 1, 3, 5, 8];
-const ROOMS = [];
+// const ROOMS = [];
 
 app.get('/rooms', (req, res) => {
-
-  res.json(ROOMS)
-
-})
-
-
-
+  res.json(ROOMS);
+});
 
 io.on('connection', (socket) => {
-  /*
   socket.on('disconnect', () => {
     const roomWithUser = ROOMS.find((room) =>
       room.users.find((user) => user.socketId === socket.id)
@@ -114,9 +137,16 @@ io.on('connection', (socket) => {
       io.to(user.id).emit('userDisconnect', roomWithUser)
     );
   });
-  */
+
   socket.on('monitorRooms', () => {
-    io.emit('monitorRooms', ROOMS);
+    io.emit('monitorRooms');
+  });
+
+  socket.on('createRoom', (room) => {
+    ROOMS.push(room);
+
+    // io.emit('monitorRooms');
+    io.to(socket.id).emit('createRoomAdmin', room);
   });
 
   socket.on('joinRoom', (userAndRoomIndex) => {
@@ -130,23 +160,23 @@ io.on('connection', (socket) => {
     const room = ROOMS[roomIndex];
     let userAlreadyInRoom = false;
     room.users.forEach((user) => {
-      if (user.userName === userAndRoomIndex.name) {
+      if (user.name === userAndRoomIndex.name) {
         console.log('User that name is already in the room.');
         userAlreadyInRoom = true;
         return;
       }
     });
     if (userAlreadyInRoom) {
-        io.to(socket.id).emit('userAlreadyInRoom', room);
+      io.to(socket.id).emit('userAlreadyInRoom', room);
       return;
     }
     const user = {
-      userName: userAndRoomIndex.name,
-      socketId: socket.id
-    }
+      name: userAndRoomIndex.name,
+      socketId: socket.id,
+    };
     room.users.push(user);
-    console.log(ROOMS[roomIndex])
-    room.users.forEach((user) => io.to(user.id).emit('joinRoom', room));
+    console.log(ROOMS[roomIndex]);
+    room.users.forEach((user) => io.to(user.socketId).emit('joinRoom', room));
   });
 
   socket.on('leaveRoom', (userAndRoomIndex) => {
@@ -177,15 +207,35 @@ io.on('connection', (socket) => {
     usersInRoom.forEach((user) => io.to(user.socketId).emit('roomDeleted'));
   });
 
-  socket.on('vote', (roomIndexAndUserWhoVotedAndScore) => {
-    const room = ROOMS[roomIndex];
-    const usersInRoom = room.users.map((user) => user);
+  socket.on('vote', (voteValue) => {
 
+    const room = ROOMS.find((room) =>
+      room.users.find((user) => user.socketId === socket.id)
+    );
+    let = userAlreadyVoted = false;
+
+    room.currentTopic.votes.forEach((vote, index) => {
+      if (vote.user.socketId === socket.id) {
+        if (vote.score === voteValue) {
+          room.currentTopic.votes.splice(index, 1);
+
+        } else {
+          vote.score = voteValue;
+        }
+        userAlreadyVoted = true;
+      }
+    })
+
+    if (userAlreadyVoted) {
+      room.users.forEach((user) => io.to(user.socketId).emit('vote', room));
+      return;
+    }
+    
+    const user = room.users.find((user) => user.socketId === socket.id);
     const userAndScore = {
-      user: roomIndexAndUserWhoVotedAndScore.user,
-      score: roomIndexAndUserWhoVotedAndScore.score,
+      user: user,
+      score: voteValue,
     };
-
     room.currentTopic.votes.push(userAndScore);
 
     if (room.users.length === room.currentTopic.votes.length) {
@@ -196,70 +246,103 @@ io.on('connection', (socket) => {
       const averageValue = scoresAdded / room.currentTopic.votes.length;
       const fibonacciValue = roundToNearestFibonacci(averageValue);
 
-      const lastUserScoreAndFibonacci = {
-        userScore: userAndScore,
-        averageValue: fibonacciValue,
-      };
-
       room.currentTopic.score = fibonacciValue;
 
-      return usersInRoom.forEach((user) =>
-        io.to(user.socketId).emit('allVoted', lastUserScoreAndFibonacci)
+      room.users.forEach((user) =>
+        io.to(user.socketId).emit('allVoted', room)
       );
+      return io.to(room.admin.socketId).emit("allVoted", room);
     }
-
-    usersInRoom.forEach((user) => io.to(user.socketId).emit('vote', user));
+    console.log(userAndScore);
+    room.users.forEach((user) => io.to(user.socketId).emit('vote', room));
   });
 
-  socket.on('changeTopicOrder', (roomAndTopicAndDirection) => {
-    const room = ROOMS[roomAndTopicAndDirection.roomIndex];
-    const direction = roomAndTopicAndDirection.direction;
+  socket.on('changeTopicOrder', (topicIndexAndDirection) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
+    const direction = topicIndexAndDirection.direction;
+    const topicIndex = topicIndexAndDirection.topicIndex;
+    const topicToChange = room.upcomingTopics[topicIndex];
 
-    const indexOfTopic = room.topics.indexOf(roomAndTopicAndDirection.topic);
-
-    if (direction == 'down') {
+    if (direction == 'ner') {
       // handle swap down
-      room.topics[indexOfTopic] = room.topics[indexOfTopic + 1];
-      room.topics[indexOfTopic + 1] = roomAndTopicAndDirection.topic;
+      room.upcomingTopics[topicIndex] = room.upcomingTopics[topicIndex + 1];
+      room.upcomingTopics[topicIndex + 1] = topicToChange;
     } else {
       // handle swap up
-      room.topics[indexOfTopic] = room.topics[indexOfTopic - 1];
-      room.topics[indexOfTopic - 1] = roomAndTopicAndDirection.topic;
+      room.upcomingTopics[topicIndex] = room.upcomingTopics[topicIndex - 1];
+      room.upcomingTopics[topicIndex - 1] = topicToChange;
     }
+
+    room.users.forEach((user) =>
+      io.to(user.socketId).emit('changeTopicOrder', room)
+    );
+    io.to(room.admin.socketId).emit('changeTopicOrderAdmin', room);
   });
 
-  socket.on('startGame', (roomIndex) => {
-    const room = ROOMS[roomIndex];
+  socket.on('startGame', () => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
 
-    room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
+    if (room.upcomingTopics.length < 1) {
+      return io.to(socket.id).emit('noTopics');
+    }
 
-    room.upcomingTopics.splice(0, 1);
+    room.currentTopic = { title: room.upcomingTopics[0].title, votes: [] };
 
-    room.users.forEach((user) => io.to(user.socketId).emit('startGame', room));
-  });
-
-  socket.on('nextTopic', (roomIndex) => {
-    const room = ROOMS[roomIndex];
-
-    room.finishedTopics.push(room.currentTopic);
-
-    room.currentTopic = { title: room.upcomingTopics[0], votes: [] };
-
-    room.upcomingTopics.splice(0, 1);
+    room.upcomingTopics.shift();
 
     room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
+    io.to(socket.id).emit('nextTopicAdmin', room);
   });
 
-  socket.on('endGame', (roomIndex) => {
-    const room = ROOMS[roomIndex];
-    const finishedTopics = room.finishedTopics;
+  socket.on('nextTopic', () => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
+
+    if (room.currentTopic.votes.length < room.users.length) {
+      return io.to(socket.id).emit('missingVotes');
+    }
+
+    room.previousTopics.push(room.currentTopic);
+
+    room.currentTopic = { title: room.upcomingTopics[0].title, votes: [] };
+
+    room.upcomingTopics.shift();
+
+    room.users.forEach((user) => io.to(user.socketId).emit('nextTopic', room));
+    io.to(socket.id).emit('nextTopicAdmin', room);
+  });
+
+  socket.on('removeTopic', (topicIndex) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
+
+    room.upcomingTopics.splice(topicIndex, 1);
+
+    room.users.forEach((user) =>
+      io.to(user.socketId).emit('removeTopic', room)
+    );
+    io.to(socket.id).emit('removeTopicAdmin', room);
+  });
+
+  socket.on('addTopic', (topicTitle) => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
+
+    room.upcomingTopics.push({ title: topicTitle });
+
+    room.users.forEach((user) => io.to(user.socketId).emit('addTopic', room));
+    io.to(socket.id).emit('addTopicAdmin', room);
+  });
+
+  socket.on('endSession', () => {
+    const room = ROOMS.find((room) => room.admin.socketId == socket.id);
+    const roomIndex = ROOMS.indexOf(room);
     const users = room.users;
+    const admin = room.admin;
+
+    // spara rummet i databasen här
 
     ROOMS.splice(roomIndex, 1);
 
-    users.forEach((user) =>
-      io.to(user.socketId).emit('endGame', finishedTopics)
-    );
+    users.forEach((user) => io.to(user.socketId).emit('endSession'));
+    io.to(admin.socketId).emit('endSession');
   });
 });
 
