@@ -20,7 +20,8 @@
 
         input{
             height: 30px;
-            border-radius: 10px;
+            border-radius: 2px;
+            border: none;
             background-color: rgb(242, 242, 242);
             margin-bottom: 20px;
             margin-left: 5px;
@@ -29,11 +30,12 @@
         button{
             height: 35px;
             margin-left: 10px;
-            background-color: $third;
+            background-color: transparent;
             color: white;
-            border: none;
-            border-radius: 10px;
-            margin-right:5px;        }
+            border: black solid 1.5px;
+            border-radius: 2px;
+            margin-right:5px;
+        }
     }
 
     .admin-start-vote{
@@ -44,9 +46,9 @@
         button{
             height: 35px;
             width: 130px;
-            border: none;
-            border-radius: 10px;
-            background-color: $secondary;
+            border: black solid 1.5px;
+            border-radius: 2px;
+            background-color: transparent;
             color: white;
         }
     }
@@ -58,9 +60,9 @@
 
         button{
             height: 35px;
-            border: none;
-            border-radius: 10px;
-            background-color: $third;
+            border: black solid 1.5px;
+            border-radius: 2px;
+            background-color: transparent;
             color: white;
         }
     }
@@ -78,47 +80,50 @@
             align-items: center;
             height: 70px;
             width: 250px;
-            background-color: $info;
+            background-color: $third;
             margin-bottom: 20px;
             margin-left: 20px;
-            border-radius: 20px;
+            border-radius: 5px;
 
             .remove-upcoming-topic-btn{
-                background-color: black;
+                background-color: transparent;
                 height: 30px;
                 width: 35px;
                 font-size: 1.5rem;
-                border: none;
-                border-radius: 5px;
+                border: black solid 1.5px;
+                border-radius: 2px;
                 margin-left: 10px;
                 margin-right: 15px;
                 color: white;
             }
 
             .move-topic-up-btn{
-                background-color: black;
+                background-color: transparent;
                 color: white;
-                border: none;
+                border: black solid 1.5px;
                 margin-left: 15px;
                 height: 30px;
-                border-radius: 5px;
+                border-radius: 2px;
+
+                &:disabled{
+                    color: grey;
+                }
             }
 
             .move-topic-down-btn{
-                background-color: black;
+                background-color: transparent;
                 color: white;
-                border: none;
+                border: black solid 1.5px;
                 margin-left: 5px;
                 margin-right: 10px;
                 height: 30px;
-                border-radius: 5px;
+                border-radius: 2px;
+
+                &:disabled{
+                    color: grey;
+                }
             }
         }
-
-        
-
-        
-
     }
 
     .admin-main-content {
