@@ -185,6 +185,14 @@
 
     .admin-end{
         grid-area: 6 / 1 / 5 / 1;
+        margin: 0 auto;
+
+        button{
+            height: 35px;
+            border: black solid 1.5px;
+            border-radius: 2px;
+            background-color: transparent;
+            color: white;
+        }
     }
-    
 }
