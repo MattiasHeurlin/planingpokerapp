@@ -9,6 +9,7 @@ export function renderEndSessionPage(room: Room) {
   if (localStorage.getItem('user')) {
     localStorage.removeItem('user');
   }
+
   const main = document.querySelector<HTMLDivElement>('.main-content');
   main!.innerHTML = '';
 

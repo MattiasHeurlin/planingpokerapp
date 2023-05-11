@@ -47,6 +47,7 @@ export function getAllRooms() {
       }
       renderRooms(data);
     });
+  monitorRooms();
 }
 
 export function renderRooms(rooms: Room[]) {
@@ -133,6 +134,7 @@ function reJoinCheck(rooms: Room[]) {
 }
 
 export function monitorRooms() {
+  socket.off('monitorRooms');
   socket.on('monitorRooms', () => {
     getAllRooms();
   });
