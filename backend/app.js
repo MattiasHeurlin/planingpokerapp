@@ -10,6 +10,8 @@ require('dotenv').config();
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const superadminRouter = require('./routes/superadmin');
+const sessionsRouter = require('./routes/sessions');
+const SessionModel = require("./models/SessionModel");
 const { stringify } = require('querystring');
 
 const app = express();
@@ -41,75 +43,76 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/superadmin', superadminRouter);
+app.use('/sessions', sessionsRouter);
 
-const ROOMS = [
-  {
-    admin: { name: 'Joe' },
-    users: [
-      {
-        name: 'Doe',
-        socketId: 1,
-      },
-      {
-        name: 'Foe',
-        socketId: 2,
-      },
-    ],
-    usersWhoLeft: ['Donny'],
-    upcomingTopics: [
-      {
-        title: 'Skapa frontend',
-      },
-      {
-        title: 'Skapa backend',
-      },
-    ],
-    currentTopic: {
-      title: 'Bygga Youtube klon',
-      votes: [
-        { user: { name: 'gregory' }, score: 3 },
-        { user: { name: 'Barry' }, score: 3 },
-      ],
-      score: 0, // Avg score
-    },
-    previousTopics: [
-      { title: 'skapa admin-vy', score: 5 },
-      { title: 'random topic', score: 3 },
-    ],
-  },
-  {
-    admin: { name: 'Troy' },
-    users: [
-      {
-        name: 'Lory',
-        socketId: 1,
-      },
-      {
-        name: 'Barry',
-        socketId: 2,
-      },
-    ],
-    usersWhoLeft: ['Donny'],
-    upcomingTopics: [
-      {
-        title: 'Skapa frontend',
-      },
-      {
-        title: 'Skapa backend',
-      },
-    ],
-    currentTopic: {
-      title: 'Bygga Spotify klon',
-      votes: [{ user: 'gregory', score: 3 }],
-    },
-    previousTopics: [
-      { title: 'skapa admin-vy', score: 5 },
-      { title: 'random topic', score: 3 },
-    ],
-  },
-];
+// const ROOMS = [
+//   {
+//     admin: { name: 'Joe' },
+//     users: [
+//       {
+//         name: 'Doe',
+//         socketId: 1,
+//       },
+//       {
+//         name: 'Foe',
+//         socketId: 2,
+//       },
+//     ],
+//     usersWhoLeft: ['Donny'],
+//     upcomingTopics: [
+//       {
+//         title: 'Skapa frontend',
+//       },
+//       {
+//         title: 'Skapa backend',
+//       },
+//     ],
+//     currentTopic: {
+//       title: 'Bygga Youtube klon',
+//       votes: [
+//         { user: { name: 'gregory' }, score: 3 },
+//         { user: { name: 'Barry' }, score: 3 },
+//       ],
+//       score: 0, // Avg score
+//     },
+//     previousTopics: [
+//       { title: 'skapa admin-vy', score: 5 },
+//       { title: 'random topic', score: 3 },
+//     ],
+//   },
+//   {
+//     admin: { name: 'Troy' },
+//     users: [
+//       {
+//         name: 'Lory',
+//         socketId: 1,
+//       },
+//       {
+//         name: 'Barry',
+//         socketId: 2,
+//       },
+//     ],
+//     usersWhoLeft: ['Donny'],
+//     upcomingTopics: [
+//       {
+//         title: 'Skapa frontend',
+//       },
+//       {
+//         title: 'Skapa backend',
+//       },
+//     ],
+//     currentTopic: {
+//       title: 'Bygga Spotify klon',
+//       votes: [{ user: 'gregory', score: 3 }],
+//     },
+//     previousTopics: [
+//       { title: 'skapa admin-vy', score: 5 },
+//       { title: 'random topic', score: 3 },
+//     ],
+//   },
+// ];
 const FIBONACCI = [0, 1, 3, 5, 8];
-// const ROOMS = [];
+const ROOMS = [];
 
 app.get('/rooms', (req, res) => {
   res.json(ROOMS);
@@ -335,14 +338,14 @@ io.on('connection', (socket) => {
     const room = ROOMS.find((room) => room.admin.socketId == socket.id);
     const roomIndex = ROOMS.indexOf(room);
     const users = room.users;
-    const admin = room.admin;
+    const admin = room?.admin;
 
-    // spara rummet i databasen här
+    saveSessionToDatabase(room);
 
     ROOMS.splice(roomIndex, 1);
 
-    users.forEach((user) => io.to(user.socketId).emit('endSession'));
-    io.to(admin.socketId).emit('endSession');
+    users.forEach((user) => io.to(user.socketId).emit('endSession', room));
+    io.to(admin.socketId).emit('endSession', room);
   });
 });
 
@@ -360,5 +363,13 @@ function roundToNearestFibonacci(number) {
 
   return nearestFib;
 }
+
+async function saveSessionToDatabase(room) {
+  const topicData = room.previousTopics.map(topic => ({title: topic.title, averageScore: topic.score}));
+  const userNames = room.users.map(user => user.name);
+  const sessionData = { adminName: room.admin.name, userNames, topics: topicData};
+  const session = await new SessionModel(sessionData);
+  await session.save();
+};
 
 module.exports = { app: app, server: server };
