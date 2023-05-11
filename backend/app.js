@@ -42,74 +42,74 @@ app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/superadmin', superadminRouter);
 
-const ROOMS = [
-  {
-    admin: { name: 'Joe' },
-    users: [
-      {
-        name: 'Doe',
-        socketId: 1,
-      },
-      {
-        name: 'Foe',
-        socketId: 2,
-      },
-    ],
-    usersWhoLeft: ['Donny'],
-    upcomingTopics: [
-      {
-        title: 'Skapa frontend',
-      },
-      {
-        title: 'Skapa backend',
-      },
-    ],
-    currentTopic: {
-      title: 'Bygga Youtube klon',
-      votes: [
-        { user: { name: 'gregory' }, score: 3 },
-        { user: { name: 'Barry' }, score: 3 },
-      ],
-      score: 0, // Avg score
-    },
-    previousTopics: [
-      { title: 'skapa admin-vy', score: 5 },
-      { title: 'random topic', score: 3 },
-    ],
-  },
-  {
-    admin: { name: 'Troy' },
-    users: [
-      {
-        name: 'Lory',
-        socketId: 1,
-      },
-      {
-        name: 'Barry',
-        socketId: 2,
-      },
-    ],
-    usersWhoLeft: ['Donny'],
-    upcomingTopics: [
-      {
-        title: 'Skapa frontend',
-      },
-      {
-        title: 'Skapa backend',
-      },
-    ],
-    currentTopic: {
-      title: 'Bygga Spotify klon',
-      votes: [{ user: 'gregory', score: 3 }],
-    },
-    previousTopics: [
-      { title: 'skapa admin-vy', score: 5 },
-      { title: 'random topic', score: 3 },
-    ],
-  },
-];
+// const ROOMS = [
+//   {
+//     admin: { name: 'Joe' },
+//     users: [
+//       {
+//         name: 'Doe',
+//         socketId: 1,
+//       },
+//       {
+//         name: 'Foe',
+//         socketId: 2,
+//       },
+//     ],
+//     usersWhoLeft: ['Donny'],
+//     upcomingTopics: [
+//       {
+//         title: 'Skapa frontend',
+//       },
+//       {
+//         title: 'Skapa backend',
+//       },
+//     ],
+//     currentTopic: {
+//       title: 'Bygga Youtube klon',
+//       votes: [
+//         { user: { name: 'gregory' }, score: 3 },
+//         { user: { name: 'Barry' }, score: 3 },
+//       ],
+//       score: 0, // Avg score
+//     },
+//     previousTopics: [
+//       { title: 'skapa admin-vy', score: 5 },
+//       { title: 'random topic', score: 3 },
+//     ],
+//   },
+//   {
+//     admin: { name: 'Troy' },
+//     users: [
+//       {
+//         name: 'Lory',
+//         socketId: 1,
+//       },
+//       {
+//         name: 'Barry',
+//         socketId: 2,
+//       },
+//     ],
+//     usersWhoLeft: ['Donny'],
+//     upcomingTopics: [
+//       {
+//         title: 'Skapa frontend',
+//       },
+//       {
+//         title: 'Skapa backend',
+//       },
+//     ],
+//     currentTopic: {
+//       title: 'Bygga Spotify klon',
+//       votes: [{ user: 'gregory', score: 3 }],
+//     },
+//     previousTopics: [
+//       { title: 'skapa admin-vy', score: 5 },
+//       { title: 'random topic', score: 3 },
+//     ],
+//   },
+// ];
 const FIBONACCI = [0, 1, 3, 5, 8];
-// const ROOMS = [];
+const ROOMS = [];
 
 app.get('/rooms', (req, res) => {
   res.json(ROOMS);
@@ -122,8 +122,7 @@ io.on('connection', (socket) => {
     );
 
     if (!roomWithUser) {
-      console.log('User without room left');
-      return;
+      return console.log('User without room left');
     }
 
     const user = roomWithUser.users.find((user) => user.socketId == socket.id);
@@ -134,8 +133,9 @@ io.on('connection', (socket) => {
     roomWithUser.usersWhoLeft.push(user);
 
     roomWithUser.users.forEach((user) =>
-      io.to(user.id).emit('userDisconnect', roomWithUser)
+      io.to(user.socketId).emit('userLeft', roomWithUser)
     );
+    io.to(roomWithUser.admin.socketId).emit('userLeftAdmin', roomWithUser);
   });
 
   socket.on('monitorRooms', () => {
@@ -145,57 +145,75 @@ io.on('connection', (socket) => {
   socket.on('createRoom', (room) => {
     ROOMS.push(room);
 
-    // io.emit('monitorRooms');
+    io.emit('monitorRooms');
     io.to(socket.id).emit('createRoomAdmin', room);
   });
 
   socket.on('joinRoom', (userAndRoomIndex) => {
-    // userAndRoomIndex = {
-    //   user: {id: uuidId, name: "Random", socketId: socketId},
-    //   roomIndex: number
+    const roomIndex = userAndRoomIndex.roomIndex;
+    const room = ROOMS[roomIndex];
+
+    // let userAlreadyInRoom = false;
+
+    // room.users.forEach((user) => {
+    //   if (user.name === userAndRoomIndex.name) {
+    //     console.log('User that name is already in the room.');
+    //     userAlreadyInRoom = true;
+    //     return;
+    //   }
+    // });
+
+    // if (userAlreadyInRoom) {
+    //   io.to(socket.id).emit('userAlreadyInRoom', room);
+    //   return;
     // }
 
-    const roomIndex = userAndRoomIndex.roomIndex;
+    const user = { ...userAndRoomIndex.user, socketId: socket.id };
 
-    const room = ROOMS[roomIndex];
-    let userAlreadyInRoom = false;
-    room.users.forEach((user) => {
-      if (user.name === userAndRoomIndex.user.name) {
-        console.log('User that name is already in the room.');
-        userAlreadyInRoom = true;
-        return;
-      }
-    });
-    if (userAlreadyInRoom) {
-      io.to(socket.id).emit('userAlreadyInRoom', room);
-      return;
-    }
-    const user = {
-      name: userAndRoomIndex.name,
-      socketId: socket.id,
-    };
     room.users.push(user);
-    console.log(ROOMS[roomIndex]);
+
     room.users.forEach((user) => io.to(user.socketId).emit('joinRoom', room));
+    io.to(room.admin.socketId).emit('renderRoomAdmin', room);
   });
 
-  socket.on('leaveRoom', (userAndRoomIndex) => {
-    // userAndRoomIndex = {
-    //   user: {id: uuidId, name: "Random", socketId: socketId},
-    //   roomIndex: number
-    // }
-
-    const room = ROOMS[roomIndex];
-    const user = room.users.find(
-      (user) => user.socketId == userAndRoomIndex.user.socketId
+  socket.on('reJoinRoom', (user) => {
+    const room = ROOMS.find((room) =>
+      room.usersWhoLeft.find((userToFind) => userToFind.id == user.id)
     );
-    const indexOfUser = room.users.indexOf(user);
 
-    room.splice(indexOfUser, 1);
+    const userInRoom = room.usersWhoLeft.find(
+      (userToFind) => userToFind.id == user.id
+    );
+
+    const userIndex = room.usersWhoLeft.indexOf(userInRoom);
+    room.usersWhoLeft.splice(userIndex, 1);
+
+    const updatedUser = { ...userInRoom, socketId: socket.id };
+    room.users.push(updatedUser);
+
+    room.users.forEach((user) =>
+      io.to(user.socketId).emit('renderRoomUser', room)
+    );
+    io.to(room.admin.socketId).emit('renderRoomAdmin', room);
+  });
+
+  socket.on('leaveRoom', () => {
+    const room = ROOMS.find((room) =>
+      room.users.find((userToFind) => userToFind.socketId == socket.id)
+    );
+    console.log(socket.id);
+    console.log(room);
+
+    const user = room.users.find((user) => user.socketId == socket.id);
+
+    const indexOfUser = room.users.indexOf(user);
+    room.users.splice(indexOfUser, 1);
 
     room.usersWhoLeft.push(user);
 
-    room.users.forEach((user) => io.to(user.id).emit('userLeft', room));
+    io.to(socket.id).emit('monitorRooms');
+    room.users.forEach((user) => io.to(user.socketId).emit('userLeft', room));
+    io.to(room.admin.socketId).emit('userLeftAdmin', room);
   });
 
   socket.on('deleteRoom', (roomIndex) => {
@@ -249,7 +267,7 @@ io.on('connection', (socket) => {
       room.users.forEach((user) => io.to(user.socketId).emit('allVoted', room));
       return io.to(room.admin.socketId).emit('allVoted', room);
     }
-    console.log(userAndScore);
+
     room.users.forEach((user) => io.to(user.socketId).emit('vote', room));
   });
 
