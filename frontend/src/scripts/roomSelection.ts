@@ -1,21 +1,41 @@
-import { uuid } from 'uuidv4';
+import { createRoomElements } from './createRoom';
 import { socket } from './main';
+import { addUserSockets } from './sockets';
 
 export interface Room {
-  admin: string;
+  admin: Admin;
   users: User[];
   usersWhoLeft: string[];
   upcomingTopics: Topic[];
-  currentTopic: Topic[];
+  currentTopic: CurrentTopic;
+  previousTopics: Topic[];
 }
+
+export interface Admin {
+  name: string;
+  socketId: string;
+}
+
 export interface User {
   name: string;
   id: string;
 }
 export interface Topic {
-  title: string;
+  title?: string;
+  votes?: Vote[];
   score?: number;
 }
+
+interface CurrentTopic {
+  title: string;
+  votes: Vote[];
+  score: number;
+}
+interface Vote {
+  user: User;
+  score: number;
+}
+
 export function getAllRooms() {
   fetch('http://localhost:3000/rooms')
     .then((res) => res.json())
@@ -31,6 +51,7 @@ export function renderRooms(rooms: Room[]) {
   const div = document.createElement('div');
   div.classList.add('room-select-container');
   const main = document.querySelector<HTMLDivElement>('.main-content');
+  main!.innerHTML = '';
   const adminText = document.createElement('p');
   adminText.innerText = 'Rum Admin:';
 
@@ -40,29 +61,16 @@ export function renderRooms(rooms: Room[]) {
     roomDiv.classList.add('room');
     const inputContainer = document.createElement('div');
     const roomName = document.createElement('h2');
-    roomName.innerText = room.admin;
+    roomName.innerText = room.admin.name;
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = 'Skriv in ditt namn';
     const button = document.createElement('button');
     button.innerText = 'Gå med';
-    button.id = `joinBtn-${i}`;
     button.addEventListener('click', () => {
-      const storedUser = localStorage.getItem('user');
+      addUserSockets();
 
-      if (!storedUser) {
-        const user = {
-          id: uuid(),
-          name: input.value,
-        };
-        localStorage.setItem('user', JSON.stringify(user));
-      }
-
-      const userFromStorage: User | null = storedUser
-        ? JSON.parse(storedUser)
-        : null;
-
-      socket.emit('joinRoom', { user: userFromStorage, roomIndex: i });
+      socket.emit('joinRoom', { name: input.value, roomIndex: i });
       console.log(input.value, i);
     });
 
@@ -70,7 +78,9 @@ export function renderRooms(rooms: Room[]) {
     roomDiv.append(adminText, roomName, inputContainer);
     div.append(roomDiv);
   }
+
   main!.append(div);
+  createRoomElements();
   reJoinCheck(rooms);
 }
 
