@@ -119,7 +119,7 @@ export function renderSessionHistory() {
     app!.innerHTML = '';
     app!.append(sessionHistoryHeading, sessionHistorySubHeading, sessionHistoryUl);
 
-    //superadminLogout();
+    superadminLogout();
 };
 
 function renderSessionInfo(session: any) {
@@ -133,4 +133,15 @@ function renderSessionInfo(session: any) {
         app!.append(topicTitleAndScore);
     })
     //superadminBackBtn();
+};
+
+export function superadminLogout() {
+    const superadminLogoutBtn: HTMLButtonElement = document.createElement('button');
+    superadminLogoutBtn.innerText = 'Logga ut';
+    superadminLogoutBtn.classList.add('superadminLogoutBtn');
+    app!.append(superadminLogoutBtn);
+
+    superadminLogoutBtn.addEventListener('click', () => {
+        window.location.reload();
+    });
 };
