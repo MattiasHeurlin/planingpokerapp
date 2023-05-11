@@ -12,7 +12,7 @@ class Room {
     { title: 'Nummer 2', votes: [] },
     { title: 'Nummer 3', votes: [] },
   ];
-  public currentTopic: Topic = {};
+  public currentTopic: Topic | undefined;
   public previousTopics: Topic[] = [];
 
   constructor(admin: string) {
@@ -36,6 +36,7 @@ export function createRoom(roomAdmin: string) {
     socket.off('createRoomAdmin');
   });
 
+  socket.off('monitorRooms');
   socket.emit('createRoom', newRoom);
 }
 
