@@ -10,6 +10,8 @@ require('dotenv').config();
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const superadminRouter = require('./routes/superadmin');
+const sessionsRouter = require('./routes/sessions');
+const SessionModel = require("./models/SessionModel");
 const { stringify } = require('querystring');
 
 const app = express();
@@ -41,6 +43,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/users', usersRouter);
 app.use('/superadmin', superadminRouter);
+app.use('/sessions', sessionsRouter);
 
 // const ROOMS = [
 //   {
@@ -363,14 +366,14 @@ io.on('connection', (socket) => {
     const room = ROOMS.find((room) => room.admin.socketId == socket.id);
     const roomIndex = ROOMS.indexOf(room);
     const users = room.users;
-    const admin = room.admin;
+    const admin = room?.admin;
 
-    // spara rummet i databasen här
+    saveSessionToDatabase(room);
 
     ROOMS.splice(roomIndex, 1);
 
-    users.forEach((user) => io.to(user.socketId).emit('endSession'));
-    io.to(admin.socketId).emit('endSession');
+    users.forEach((user) => io.to(user.socketId).emit('endSession', room));
+    io.to(admin.socketId).emit('endSession', room);
   });
 });
 
@@ -388,5 +391,13 @@ function roundToNearestFibonacci(number) {
 
   return nearestFib;
 }
+
+async function saveSessionToDatabase(room) {
+  const topicData = room.previousTopics.map(topic => ({title: topic.title, averageScore: topic.score}));
+  const userNames = room.users.map(user => user.name);
+  const sessionData = { adminName: room.admin.name, userNames, topics: topicData};
+  const session = await new SessionModel(sessionData);
+  await session.save();
+};
 
 module.exports = { app: app, server: server };
