@@ -97,10 +97,13 @@ export function createUpcomingTopicsAdmin(room: Room) {
     ) as HTMLButtonElement;
 
     removeUpcomingTopicBtn.innerText = '-';
+    removeUpcomingTopicBtn.classList.add('remove-upcoming-topic-btn')
     removeUpcomingTopicBtn.id = `${i}`;
     upcomingTopic.innerText = room.upcomingTopics[i].title || '';
     moveTopicDownBtn.innerText = 'Ner';
+    moveTopicDownBtn.classList.add('move-topic-down-btn')
     moveTopicUpBtn.innerText = 'Upp';
+    moveTopicUpBtn.classList.add('move-topic-up-btn')
 
     if (room.upcomingTopics.length == 1) {
       moveTopicUpBtn.disabled = true;
@@ -170,20 +173,11 @@ function createNextTopicBtn() {
 }
 
 function createCurrentTopic(room: Room) {
-  const currentTopicContainer = document.querySelector(
-    '.main-content'
-  ) as HTMLDivElement;
+  const currentTopicContainer = document.querySelector('.main-content') as HTMLDivElement;
   currentTopicContainer.innerHTML = '';
-  const currentTopicTitleContainer = document.createElement(
-    'div'
-  ) as HTMLDivElement;
+  const currentTopicTitleContainer = document.createElement('div') as HTMLDivElement;
+  currentTopicTitleContainer.classList.add('current-topic-title-container')
   const currentTopicTitle = document.createElement('p') as HTMLParagraphElement;
-  const userAndAverageValueContainer = document.createElement(
-    'div'
-  ) as HTMLDivElement;
-  const averageValueContainer = document.createElement('div') as HTMLDivElement;
-  const averageValueTitle = document.createElement('p') as HTMLParagraphElement;
-  const averageValue = document.createElement('p') as HTMLParagraphElement;
 
   currentTopicTitle.innerText = room.currentTopic
     ? room.currentTopic.title
@@ -196,10 +190,6 @@ function createCurrentTopic(room: Room) {
   // adminContainer.appendChild(currentTopicContainer);
   currentTopicContainer.appendChild(currentTopicTitleContainer);
   currentTopicTitleContainer.appendChild(currentTopicTitle);
-  currentTopicContainer.appendChild(userAndAverageValueContainer);
-  userAndAverageValueContainer.appendChild(averageValueContainer);
-  averageValueContainer.appendChild(averageValueTitle);
-  averageValueContainer.appendChild(averageValue);
 }
 
 function createPreviousTopics(room: Room) {
