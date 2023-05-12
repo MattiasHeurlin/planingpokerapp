@@ -317,7 +317,21 @@ io.on('connection', (socket) => {
 
     room.previousTopics.push(room.currentTopic);
 
-    room.currentTopic = { title: room.upcomingTopics[0].title, votes: [] };
+    if (room.upcomingTopics.length == 0) {
+      room.users.forEach((user) =>
+        io.to(user.socketId).emit('endSession', room)
+      );
+      io.to(socket.id).emit('endSession', room);
+
+      // spara även rummet till databas här
+
+      const roomIndex = ROOMS.indexOf(room);
+      return ROOMS.splice(roomIndex, 1);
+    }
+
+    if (room.upcomingTopics.length > 0) {
+      room.currentTopic = { title: room.upcomingTopics[0].title, votes: [] };
+    }
 
     room.upcomingTopics.shift();
 
