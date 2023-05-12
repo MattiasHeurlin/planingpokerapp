@@ -54,7 +54,7 @@ export function renderRooms(rooms: Room[]) {
   const div = document.createElement('div');
   div.classList.add('room-select-container');
   const main = document.querySelector<HTMLDivElement>('.main-content');
-  main!.innerHTML = '';
+  main!.innerHTML = '<h1>Öppna Rum</h1>';
   const adminText = document.createElement('p');
   adminText.innerText = 'Rum Admin:';
 
@@ -63,6 +63,7 @@ export function renderRooms(rooms: Room[]) {
     const roomDiv = document.createElement('div');
     roomDiv.classList.add('room');
     const inputContainer = document.createElement('div');
+    inputContainer.classList.add('input-container');
     const roomName = document.createElement('h2');
     roomName.innerText = room.admin.name;
     const input = document.createElement('input');

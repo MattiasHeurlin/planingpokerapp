@@ -7,11 +7,7 @@ class Room {
   public admin: Admin;
   public users: User[] = [];
   public usersWhoLeft: User[] = [];
-  public upcomingTopics: Topic[] = [
-    { title: 'Nummer 1', votes: [] },
-    { title: 'Nummer 2', votes: [] },
-    { title: 'Nummer 3', votes: [] },
-  ];
+  public upcomingTopics: Topic[] = [];
   public currentTopic: Topic | undefined;
   public previousTopics: Topic[] = [];
 

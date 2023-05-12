@@ -11,7 +11,7 @@ const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
 const superadminRouter = require('./routes/superadmin');
 const sessionsRouter = require('./routes/sessions');
-const SessionModel = require("./models/SessionModel");
+const SessionModel = require('./models/SessionModel');
 const { stringify } = require('querystring');
 
 const app = express();
@@ -326,7 +326,7 @@ io.on('connection', (socket) => {
       );
       io.to(socket.id).emit('endSession', room);
 
-      // spara även rummet till databas här
+      saveSessionToDatabase(room);
 
       const roomIndex = ROOMS.indexOf(room);
       return ROOMS.splice(roomIndex, 1);
@@ -393,11 +393,18 @@ function roundToNearestFibonacci(number) {
 }
 
 async function saveSessionToDatabase(room) {
-  const topicData = room.previousTopics.map(topic => ({title: topic.title, averageScore: topic.score}));
-  const userNames = room.users.map(user => user.name);
-  const sessionData = { adminName: room.admin.name, userNames, topics: topicData};
+  const topicData = room.previousTopics.map((topic) => ({
+    title: topic.title,
+    averageScore: topic.score,
+  }));
+  const userNames = room.users.map((user) => user.name);
+  const sessionData = {
+    adminName: room.admin.name,
+    userNames,
+    topics: topicData,
+  };
   const session = await new SessionModel(sessionData);
   await session.save();
-};
+}
 
 module.exports = { app: app, server: server };

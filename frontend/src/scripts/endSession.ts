@@ -1,5 +1,6 @@
-import { socket } from './main';
+import { init, socket } from './main';
 import { Room, getAllRooms } from './roomSelection';
+import { superadminLogin } from './superadminLogin';
 
 export function endSession() {
   socket.emit('endSession');
@@ -9,6 +10,15 @@ export function renderEndSessionPage(room: Room) {
   if (localStorage.getItem('user')) {
     localStorage.removeItem('user');
   }
+  const app = document.querySelector('#app');
+  app!.innerHTML = `
+    <div class="grid-container">
+      <header class="header"></header>
+      <aside class="upcoming-topics"></aside>
+      <main class="main-content"><h2>Öppna Rum<h2></main>
+      <section class="previous-topics"></section>
+      <footer class="footer"></footer>
+    </div>`;
 
   const main = document.querySelector<HTMLDivElement>('.main-content');
   main!.innerHTML = '';
@@ -18,7 +28,7 @@ export function renderEndSessionPage(room: Room) {
 
   const backBtn = document.createElement('button');
   backBtn.innerHTML = 'Tillbaka till rum-val';
-  backBtn.addEventListener('click', getAllRooms);
+  backBtn.addEventListener('click', init);
 
   const topicsTable = document.createElement('table');
   const tableHead = document.createElement('thead');
