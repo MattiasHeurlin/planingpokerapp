@@ -1,16 +1,30 @@
-[![Review Assignment Due Date](https://classroom.github.com/assets/deadline-readme-button-24ddc0f5d75046c5622901739e7c5dd533143b0c8e959d652212380cedb1ea36.svg)](https://classroom.github.com/a/V_7RZ58X)
-[![Open in Visual Studio Code](https://classroom.github.com/assets/open-in-vscode-718a45dd9cf7e7f842a935f5ebbe5719a5e09af4491e668f4dbf3b35d5cca122.svg)](https://classroom.github.com/online_ide?assignment_repo_id=11048220&assignment_repo_type=AssignmentRepo)
-# Grupparbete i kursen Agilt projektarbete
-Ingår i utbildningen "Front End Developer 2022 Distans" på Medieinstitutet.
+# PLANNING POKER 🃏🎲💻🚀
 
-## Uppgiftsbeskrivning
-Se kurswebb.
+A school project in the course Agile Methodologies where we developed a planning tool for agile teams.  
+The tool is helping teams to plan their work efficiently by allowing team members to vote on tasks using the Fibonacci scale.
 
-Tekniskt upplägg avgör ni på egen hand.
+The app has three main user roles: 
+- Room admins
+- Users who vote
+- Superadmin
 
-## Att göra
-- [ ] Fyll i scrum-mallarna dagligen (ej helger). Ni hittar dessa i mappen `scrum-ceremonies`.
+The room admins has the ability to create rooms, add tasks to the room, and change the order of the tasks to be voted on. The users can then vote on each task using the Fibonacci scale. The results are calculated and displayed as the average rounded Fibonacci number. Once the voting session is completed, the data is saved in a MongoDB database. The superadmin has access to all historical room sessions, which allows them to view and analyze previous voting sessions.
 
-- [ ] Skriv ett gruppkontrakt: när träffas ni varje vardag och hur. Bestäm tider för retro, demo och review redan nu. Hur ska ni arbeta? Hur hanterar ni pull requests och merges? Vem ansvarar för testning?
 
-- Önskar ni feedback på koden ska ni _inte_ merge:a pull requesten som heter "Feedback".
+## Tech stack 🔧
+
+- Express
+- NodeJS
+- Socket.io
+- Vite
+- MongoDB
+- TypeScript 
+- JavaScript 
+- CSS/SCSS
+
+## Developers 👨‍💻 👩‍💻 👨‍💻 👩‍💻
+
+- [@Sofilus](https://github.com/Sofilus) 
+- [@antonjanzon95](https://github.com/antonjanzon95)
+- [@MattiasHeurlin](https://github.com/MattiasHeurlin) 
+- [@zandrastr](https://github.com/zandrastr) 
