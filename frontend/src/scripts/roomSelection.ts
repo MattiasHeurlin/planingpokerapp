@@ -1,11 +1,12 @@
 import { createRoomElements } from './createRoom';
 import { socket } from './main';
 import { addUserSockets } from './sockets';
+import { v4 as uuidv4 } from 'uuid';
 
 export interface Room {
   admin: Admin;
   users: User[];
-  usersWhoLeft: string[];
+  usersWhoLeft: User[];
   upcomingTopics: Topic[];
   currentTopic: CurrentTopic;
   previousTopics: Topic[];
@@ -18,7 +19,8 @@ export interface Admin {
 
 export interface User {
   name: string;
-  id?: string; // socket id
+  id: string;
+  socketId?: string;
 }
 export interface Topic {
   title?: string;
@@ -45,13 +47,14 @@ export function getAllRooms() {
       }
       renderRooms(data);
     });
+  monitorRooms();
 }
 
 export function renderRooms(rooms: Room[]) {
   const div = document.createElement('div');
   div.classList.add('room-select-container');
   const main = document.querySelector<HTMLDivElement>('.main-content');
-  main!.innerHTML = '';
+  main!.innerHTML = '<h1>Öppna Rum</h1>';
   const adminText = document.createElement('p');
   adminText.innerText = 'Rum Admin:';
 
@@ -60,18 +63,33 @@ export function renderRooms(rooms: Room[]) {
     const roomDiv = document.createElement('div');
     roomDiv.classList.add('room');
     const inputContainer = document.createElement('div');
+    inputContainer.classList.add('input-container');
     const roomName = document.createElement('h2');
     roomName.innerText = room.admin.name;
     const input = document.createElement('input');
     input.type = 'text';
+    input.id = `input-${i}`;
     input.placeholder = 'Skriv in ditt namn';
     const button = document.createElement('button');
+    button.id = `joinBtn-${i}`;
     button.innerText = 'Gå med';
     button.addEventListener('click', () => {
-      addUserSockets();
+      socket.off('monitorRooms');
+      const storedUser = localStorage.getItem('user');
 
-      socket.emit('joinRoom', { name: input.value, roomIndex: i });
-      console.log(input.value, i);
+      if (!storedUser) {
+        const user = {
+          name: input.value,
+          id: uuidv4(),
+        };
+        localStorage.setItem('user', JSON.stringify(user));
+        addUserSockets();
+        return socket.emit('joinRoom', { user: user, roomIndex: i });
+      }
+
+      const userFromStorage = JSON.parse(storedUser);
+      addUserSockets();
+      socket.emit('reJoinRoom', userFromStorage);
     });
 
     inputContainer.append(input, button);
@@ -81,4 +99,44 @@ export function renderRooms(rooms: Room[]) {
 
   main!.append(div);
   createRoomElements();
+  reJoinCheck(rooms);
+}
+
+function reJoinCheck(rooms: Room[]) {
+  const storedUser = localStorage.getItem('user');
+
+  if (!storedUser) {
+    return;
+  }
+
+  const userFromStorage: User = JSON.parse(storedUser);
+
+  const roomWithUser: Room | undefined = rooms.find((room) =>
+    room.usersWhoLeft.find((user) => user.id == userFromStorage.id)
+  );
+
+  if (!roomWithUser) {
+    return;
+  }
+
+  const roomIndex = rooms.indexOf(roomWithUser);
+
+  const joinBtn = document.querySelector(
+    `#joinBtn-${roomIndex}`
+  ) as HTMLButtonElement;
+
+  if (joinBtn) {
+    const input = document.querySelector(
+      `#input-${roomIndex}`
+    ) as HTMLInputElement;
+    input.style.display = 'none';
+    joinBtn.innerHTML = 'Återanslut';
+  }
+}
+
+export function monitorRooms() {
+  socket.off('monitorRooms');
+  socket.on('monitorRooms', () => {
+    getAllRooms();
+  });
 }

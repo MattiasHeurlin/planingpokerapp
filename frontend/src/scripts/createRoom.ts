@@ -7,12 +7,8 @@ class Room {
   public admin: Admin;
   public users: User[] = [];
   public usersWhoLeft: User[] = [];
-  public upcomingTopics: Topic[] = [
-    { title: 'Nummer 1', votes: [] },
-    { title: 'Nummer 2', votes: [] },
-    { title: 'Nummer 3', votes: [] },
-  ];
-  public currentTopic: Topic = {};
+  public upcomingTopics: Topic[] = [];
+  public currentTopic: Topic | undefined;
   public previousTopics: Topic[] = [];
 
   constructor(admin: string) {
@@ -36,6 +32,7 @@ export function createRoom(roomAdmin: string) {
     socket.off('createRoomAdmin');
   });
 
+  socket.off('monitorRooms');
   socket.emit('createRoom', newRoom);
 }
 

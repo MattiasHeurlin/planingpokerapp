@@ -1,4 +1,4 @@
-import { User, Topic, Room } from './roomSelection';
+import { User, Topic, Room, monitorRooms } from './roomSelection';
 import { socket } from './main';
 
 export function renderUserView(room: Room) {
@@ -8,8 +8,16 @@ export function renderUserView(room: Room) {
   const header = document.querySelector('.header');
   const awaitStart = document.createElement('h2');
   awaitStart.innerHTML = 'Inväntar start...';
+  const leaveBtn = document.createElement('button');
+  leaveBtn.innerHTML = 'Lämna rum';
+  leaveBtn.classList.add('leave-room-btn');
+  leaveBtn.addEventListener('click', () => {
+    monitorRooms();
+    socket.emit('leaveRoom');
+  });
   main!.innerHTML = '';
   header!.innerHTML = '';
+  footer!.innerHTML = '';
   const h1 = document.createElement('h1');
   h1.innerHTML = 'Rum Admin: ' + room.admin.name;
   header!.append(h1);
@@ -18,7 +26,7 @@ export function renderUserView(room: Room) {
   main!.append(h2);
 
   renderUserCards(room.users);
-  footer?.appendChild(awaitStart);
+  footer?.append(awaitStart, leaveBtn);
 }
 
 export const renderUserCards = (users: User[]) => {
@@ -95,6 +103,15 @@ export function renderMainTopic(topic: Topic) {
 export function renderVotingCards() {
   const footer = document.querySelector('.footer');
   footer!.innerHTML = '';
+
+  const leaveBtn = document.createElement('button');
+  leaveBtn.innerHTML = 'Lämna rum';
+  leaveBtn.classList.add('leave-room-btn');
+  leaveBtn.addEventListener('click', () => {
+    monitorRooms();
+    socket.emit('leaveRoom');
+  });
+
   const cardContainer = document.createElement('div');
   cardContainer.classList.add('voting-card-container');
   for (let i = 0; i < 6; i++) {
@@ -144,7 +161,7 @@ export function renderVotingCards() {
     votingCard.appendChild(votingCardValue);
     cardContainer?.appendChild(votingCard);
   }
-  footer?.appendChild(cardContainer);
+  footer?.append(cardContainer, leaveBtn);
 }
 
 function castVote(value: number) {

@@ -76,25 +76,6 @@ export async function superadminLoginCheck (loginData: object) {
 }
 
 export function renderSessionHistory() {
-
-    const mockedDataFromDatabase = [ //Mockdata, ska ändras till data från databasen
-        {
-            admin: { name: 'Joe' },
-            previousTopics: [
-                { title: 'Skapa admin-vy', score: 5 },
-                { title: 'Random topic', score: 3 },
-            ],
-        },
-        {
-            admin: { name: 'Jenny' },
-            previousTopics: [
-                { title: 'Grundläggande styling', score: 1 },
-                { title: 'Sätt upp databas', score: 3 },
-                { title: 'Skapa login-funktionalitet', score: 1}
-            ],
-        }
-    ]
-
     const sessionHistoryHeading: HTMLHeadingElement = document.createElement('h1');
     const sessionHistorySubHeading: HTMLHeadingElement = document.createElement('h2');
     const sessionHistoryUl: HTMLUListElement = document.createElement('ul');
@@ -104,34 +85,60 @@ export function renderSessionHistory() {
 
     sessionHistoryHeading.classList.add('sessionHistoryHeading');
     sessionHistorySubHeading.classList.add('sessionHistorySubHeading');
-    sessionHistoryUl.classList.add('sessionHistoryUl');  
+    sessionHistoryUl.classList.add('sessionHistoryUl'); 
 
-    mockedDataFromDatabase.forEach(session => {
-        console.log('session from db mock data =>', session);
-        const sessionHistoryLi: HTMLLIElement = document.createElement('li');
-        sessionHistoryLi.classList.add('sessionHistoryLi');
-        sessionHistoryLi.innerHTML = `Admin: ${session.admin.name}`;
-        sessionHistoryUl.append(sessionHistoryLi);
+    fetch('http://localhost:3000/sessions')
+    .then(res => {
+      return res.json();
+    })
+    .then(data => {
+      console.log(data);
+      const dataFromDatabase = data;
 
-        sessionHistoryLi.addEventListener('click', () => renderSessionInfo(session));
+      dataFromDatabase.forEach((session: { adminName: any; }) => {
+          console.log('session from db:', session);
+          const sessionHistoryLi: HTMLLIElement = document.createElement('li');
+          sessionHistoryLi.classList.add('sessionHistoryLi');
+          sessionHistoryLi.innerHTML = `Admin: ${session.adminName}`;
+          sessionHistoryUl.append(sessionHistoryLi);
+
+          sessionHistoryLi.addEventListener('click', () => renderSessionInfo(session));
+      });
+
+      app!.innerHTML = '';
+      app!.append(sessionHistoryHeading, sessionHistorySubHeading, sessionHistoryUl);
+      superadminLogout();
+    })
+    .catch(error => {
+      console.error('Något gick fel.', error);
     });
-
-    app!.innerHTML = '';
-    app!.append(sessionHistoryHeading, sessionHistorySubHeading, sessionHistoryUl);
-
-    superadminLogout();
 };
 
 function renderSessionInfo(session: any) {
     app!.innerHTML = '';
+    const sessionHistoryContainer: HTMLDivElement = document.createElement('div');
+    const sessionHeading: HTMLHeadingElement = document.createElement('h1');
+    const sessionHistoryAdminAndUsers: HTMLParagraphElement = document.createElement('p');
+
+    sessionHistoryContainer.classList.add('sessionHistoryContainer');
+    sessionHeading.classList.add('sessionHeading');
+
+    sessionHeading.innerHTML = 'Planning Poker'
+
+    sessionHistoryContainer.append(sessionHeading);
     
-    session.previousTopics.forEach((topic: { title: string; score: number; }) => {
+    session.topics.forEach((topic: { title: string; averageScore: number; }) => {
         const topicTitleAndScore: HTMLParagraphElement = document.createElement('p');
-        topicTitleAndScore.innerHTML = `Topic: ${topic.title} | Medelvärde: ${topic.score}`;
+        sessionHistoryAdminAndUsers.innerHTML = `Admin: ${session.adminName} <br> Users: ${session.userNames}`;
+        topicTitleAndScore.innerHTML = `${topic.title} - Medelvärde: ${topic.averageScore} SP`;
+        
+        sessionHistoryAdminAndUsers.classList.add('sessionHistoryAdminAndUsers');
         topicTitleAndScore.classList.add('topicTitleAndScore');
 
-        app!.append(topicTitleAndScore);
+        sessionHistoryContainer.append(topicTitleAndScore);
     })
+
+    app!.append(sessionHistoryContainer, sessionHistoryAdminAndUsers);
     superadminBackBtn();
 };
 
